@@ -3,11 +3,12 @@
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { User } from "lucide-react";
+import { User, LogOut } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export function TopBar() {
   const pathname = usePathname();
-  const { dbUser } = useAuth();
+  const { dbUser, logout } = useAuth();
 
   if (pathname === "/login" || pathname === "/signup" || pathname === "/") return null;
 
@@ -17,10 +18,18 @@ export function TopBar() {
         <Image src="/CipherVault-logo.svg" alt="CipherVault Logo" width={24} height={24} className="w-6 h-6" />
         <span>CipherVault</span>
       </div>
-      <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
-        <User className="w-4 h-4 text-primary" />
-        <span className="text-sm font-medium text-primary">{dbUser?.fullName?.split(' ')[0] || "User"}</span>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20 outline-none">
+          <User className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-primary">{dbUser?.fullName?.split(' ')[0] || "User"}</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 mt-2">
+          <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 gap-2">
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   );
 }

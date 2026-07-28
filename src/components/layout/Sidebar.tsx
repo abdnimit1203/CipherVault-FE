@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Shield, Search, KeyRound, Settings, LogOut, Plus, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { name: "Home", href: "/", icon: Home },
@@ -17,6 +18,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   if (pathname === "/login" || pathname === "/signup" || pathname === "/") return null;
 
@@ -64,7 +66,7 @@ export function Sidebar() {
       </div>
 
       <div className="p-4 border-t border-border">
-        <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground">
+        <Button onClick={logout} variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground">
           <LogOut className="w-5 h-5" />
           Sign Out
         </Button>

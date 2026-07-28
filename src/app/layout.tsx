@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthProvider } from "@/context/AuthContext";
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+        <NextTopLoader color="#6366f1" showSpinner={false} />
         <AuthProvider>
           <AppLayout>{children}</AppLayout>
         </AuthProvider>

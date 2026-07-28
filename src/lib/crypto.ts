@@ -31,3 +31,94 @@ export async function deriveMasterKey(password: string, email: string): Promise<
 export function buf2hex(buffer: Uint8Array): string {
   return Array.prototype.map.call(buffer, x => ('00' + x.toString(16)).slice(-2)).join('');
 }
+
+/**
+ * Converts a Uint8Array raw key into a CryptoKey for Web Crypto API
+ */
+async function importKey(rawKey: Uint8Array): Promise<CryptoKey> {
+  return await crypto.subtle.importKey(
+    "raw",
+    rawKey,
+    { name: "AES-GCM" },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+/**
+ * Converts a Uint8Array to a Base64 string
+ */
+function bufferToBase64(buffer: ArrayBuffer): string {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+/**
+ * Converts a Base64 string to a Uint8Array
+ */
+function base64ToBuffer(base64: string): Uint8Array {
+  const binary_string = window.atob(base64);
+  const len = binary_string.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes;
+}
+
+/**
+ * Encrypts a JS object into AES-256-GCM ciphertext
+ * @param data The object to encrypt (e.g. { username, password, notes })
+ * @param masterKey The derived 32-byte master key
+ * @returns { encryptedData, iv } as Base64 strings
+ */
+export async function encryptVaultItem(data: any, masterKey: Uint8Array): Promise<{ encryptedData: string, iv: string }> {
+  const key = await importKey(masterKey);
+  const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV recommended for AES-GCM
+  
+  const encodedData = new TextEncoder().encode(JSON.stringify(data));
+  
+  const encryptedBuffer = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv: iv
+    },
+    key,
+    encodedData
+  );
+
+  return {
+    encryptedData: bufferToBase64(encryptedBuffer),
+    iv: bufferToBase64(iv.buffer)
+  };
+}
+
+/**
+ * Decrypts AES-256-GCM ciphertext back into a JS object
+ * @param encryptedData Base64 encoded ciphertext
+ * @param iv Base64 encoded initialization vector
+ * @param masterKey The derived 32-byte master key
+ * @returns The decrypted object
+ */
+export async function decryptVaultItem(encryptedData: string, iv: string, masterKey: Uint8Array): Promise<any> {
+  const key = await importKey(masterKey);
+  const ivBuffer = base64ToBuffer(iv);
+  const dataBuffer = base64ToBuffer(encryptedData);
+
+  const decryptedBuffer = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv: ivBuffer
+    },
+    key,
+    dataBuffer
+  );
+
+  const decodedString = new TextDecoder().decode(decryptedBuffer);
+  return JSON.parse(decodedString);
+}

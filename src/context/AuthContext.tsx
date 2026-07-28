@@ -39,7 +39,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [dbUser, setDbUser] = useState<DBUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [masterKey, setMasterKey] = useState<Uint8Array | null>(null);
+  const [masterKey, setMasterKeyInternal] = useState<Uint8Array | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("masterKey");
+      if (stored) {
+        setMasterKeyInternal(new Uint8Array(JSON.parse(stored)));
+      }
+    } catch (e) {
+      console.error("Failed to restore masterKey from session", e);
+    }
+  }, []);
+
+  const setMasterKey = (key: Uint8Array | null) => {
+    setMasterKeyInternal(key);
+    try {
+      if (key) {
+        sessionStorage.setItem("masterKey", JSON.stringify(Array.from(key)));
+      } else {
+        sessionStorage.removeItem("masterKey");
+      }
+    } catch (e) {
+      console.error("Failed to save masterKey to session", e);
+    }
+  };
   const router = useRouter();
   const pathname = usePathname();
 

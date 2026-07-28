@@ -6,6 +6,7 @@ import { Shield, Lock, KeyRound, Smartphone, User, LogOut, Settings, LayoutDashb
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { Footer } from "@/components/layout/Footer";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,10 +21,12 @@ export default function LandingPage() {
   const { user, dbUser, logout } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-primary/20">
+    <div className="min-h-screen flex flex-col bg-background selection:bg-primary/20 relative overflow-hidden">
+      {/* Background glowing mesh effect */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background z-0 pointer-events-none"></div>
       
       {/* Navbar */}
-      <header className="flex items-center justify-between p-6 max-w-7xl mx-auto w-full">
+      <header className="flex items-center justify-between p-6 max-w-7xl mx-auto w-full relative z-10">
         <Link href="/" className="flex items-center gap-2 text-primary font-bold text-xl tracking-tight">
           <Image src="/CipherVault-logo.svg" alt="CipherVault Logo" width={32} height={32} className="w-8 h-8" />
           <span>CipherVault</span>
@@ -73,7 +76,17 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 mt-16 md:mt-24 max-w-4xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 mt-8 md:mt-12 max-w-4xl mx-auto relative z-10">
+        
+        {/* Animated Hero Graphic */}
+        <div className="relative mb-6 w-24 h-24 flex items-center justify-center mt-2">
+          <div className="absolute inset-0 border-2 border-primary/30 rounded-full border-dashed animate-[spin_10s_linear_infinite]"></div>
+          <div className="absolute inset-2 border-2 border-cyan-400/20 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+          <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center backdrop-blur-md border border-primary/50 shadow-[0_0_40px_-10px_rgba(var(--primary),0.8)]">
+            <Shield className="w-10 h-10 text-primary" />
+          </div>
+        </div>
+
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-8 border border-primary/20">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -104,44 +117,45 @@ export default function LandingPage() {
         </div>
 
         {/* Feature Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-24 md:mt-32 w-full max-w-5xl text-left border-t border-border pt-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 md:mt-20 w-full max-w-5xl text-left relative z-10 mb-16">
           
-          <div className="flex flex-col gap-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+          <div className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(var(--primary),0.3)] transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 mb-6 group-hover:scale-110 transition-transform">
               <Lock className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold">Zero-Knowledge</h3>
+            <h3 className="text-xl font-semibold mb-3 tracking-tight">Zero-Knowledge</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              We never see your master password. Everything is encrypted using AES-256-GCM before it ever reaches our servers.
+              We never see your master password. Everything is encrypted using military-grade <span className="text-foreground font-mono text-xs bg-muted px-1 py-0.5 rounded">AES-256-GCM</span> before it ever leaves your device.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+          <div className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(var(--primary),0.3)] transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 mb-6 group-hover:scale-110 transition-transform">
               <Smartphone className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold">Mobile First</h3>
+            <h3 className="text-xl font-semibold mb-3 tracking-tight">Mobile First</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Designed as a Progressive Web App (PWA). Install it directly on your phone for a seamless native-like experience.
+              Designed as a Progressive Web App (PWA). Install it directly on your phone for a seamless, blazing-fast native-like experience anywhere.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+          <div className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-primary/50 hover:shadow-[0_0_30px_-5px_rgba(var(--primary),0.3)] transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 mb-6 group-hover:scale-110 transition-transform">
               <KeyRound className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold">Instant Generator</h3>
+            <h3 className="text-xl font-semibold mb-3 tracking-tight">Instant Generator</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Create cryptographically strong, unique passwords for every site with a single tap.
+              Create cryptographically strong, mathematically complex passwords for every site with a single tap. Never reuse a password again.
             </p>
           </div>
 
         </div>
       </main>
 
-      <footer className="mt-auto py-8 text-center text-sm text-muted-foreground border-t border-border/50">
-        <p>&copy; {new Date().getFullYear()} CipherVault. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

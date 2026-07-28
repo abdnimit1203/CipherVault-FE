@@ -7,6 +7,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/AuthContext";
+import { deriveMasterKey } from "@/lib/crypto";
+import { Loader2 } from "lucide-react";
 
 export function PasswordDetailsDialog({ 
   isOpen, 
@@ -21,6 +24,8 @@ export function PasswordDetailsDialog({
   const [showMasterPrompt, setShowMasterPrompt] = useState(false);
   const [masterPassword, setMasterPassword] = useState("");
   const [countdown, setCountdown] = useState(15);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const { masterKey, dbUser } = useAuth();
 
   // Timer for auto-hide
   useEffect(() => {
@@ -39,14 +44,40 @@ export function PasswordDetailsDialog({
     setShowMasterPrompt(true);
   };
 
-  const handleVerify = () => {
-    if (masterPassword === "password") { // Mock check
-      setShowMasterPrompt(false);
-      setIsRevealed(true);
-      setMasterPassword("");
-      toast.success("Identity verified. Password revealed.");
-    } else {
-      toast.error("Incorrect master password.");
+  const handleVerify = async () => {
+    if (!masterKey || !dbUser) {
+      toast.error("Encryption context missing. Please log in again.");
+      return;
+    }
+    
+    setIsVerifying(true);
+    try {
+      const derived = await deriveMasterKey(masterPassword, dbUser.email);
+      
+      // Compare byte arrays
+      let isValid = true;
+      if (derived.length !== masterKey.length) isValid = false;
+      else {
+        for (let i = 0; i < derived.length; i++) {
+          if (derived[i] !== masterKey[i]) {
+            isValid = false;
+            break;
+          }
+        }
+      }
+
+      if (isValid) {
+        setShowMasterPrompt(false);
+        setIsRevealed(true);
+        setMasterPassword("");
+        toast.success("Identity verified. Password revealed.");
+      } else {
+        toast.error("Incorrect master password.");
+      }
+    } catch (error) {
+      toast.error("Error verifying password.");
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -96,7 +127,7 @@ export function PasswordDetailsDialog({
                 <div className="flex items-center gap-2">
                   <Input 
                     type={isRevealed ? "text" : "password"} 
-                    value={isRevealed ? "MockSuperSecretPassword123!" : "••••••••••••••••"} 
+                    value={isRevealed ? (item?.password || "") : "••••••••••••••••"} 
                     readOnly 
                     className={`bg-muted font-mono ${isRevealed ? "text-foreground" : "text-muted-foreground"}`}
                   />
@@ -105,12 +136,35 @@ export function PasswordDetailsDialog({
                       <Eye className="w-4 h-4" /> Reveal
                     </Button>
                   ) : (
-                    <Button variant="outline" size="icon" onClick={() => handleCopy("MockSuperSecretPassword123!", "Password")}>
+                    <Button variant="outline" size="icon" onClick={() => handleCopy(item.password || "", "Password")}>
                       <Copy className="w-4 h-4" />
                     </Button>
                   )}
                 </div>
               </div>
+
+              {item.url && (
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <Label className="text-muted-foreground">Website URL</Label>
+                  <div className="flex items-center gap-2">
+                    <Input value={item.url} readOnly className="bg-muted text-foreground" />
+                    <Button variant="outline" size="icon" onClick={() => handleCopy(item.url, "URL")}>
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {item.notes && (
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <Label className="text-muted-foreground">Secure Notes</Label>
+                  <textarea 
+                    value={item.notes} 
+                    readOnly 
+                    className="flex w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none min-h-[80px]" 
+                  />
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -122,7 +176,6 @@ export function PasswordDetailsDialog({
               </DialogTitle>
               <DialogDescription>
                 Please enter your Master Password to reveal the credentials for <b>{item.title}</b>.
-                <br/> <span className="text-xs text-muted-foreground mt-2 inline-block">(Mock hint: type "password")</span>
               </DialogDescription>
             </DialogHeader>
 
@@ -140,8 +193,10 @@ export function PasswordDetailsDialog({
                 />
               </div>
               <div className="flex items-center justify-end gap-3 pt-2">
-                <Button variant="ghost" onClick={() => setShowMasterPrompt(false)}>Cancel</Button>
-                <Button onClick={handleVerify}>Verify</Button>
+                <Button variant="ghost" onClick={() => setShowMasterPrompt(false)} disabled={isVerifying}>Cancel</Button>
+                <Button onClick={handleVerify} disabled={isVerifying} className="min-w-[80px]">
+                  {isVerifying ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify"}
+                </Button>
               </div>
             </div>
           </>
