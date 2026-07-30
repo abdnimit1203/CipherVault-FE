@@ -46,8 +46,8 @@ export function TopBar() {
             <p className="text-xs font-bold text-white truncate">{dbUser?.fullName || "User Account"}</p>
             <p className="text-[11px] text-cyan-300/80 truncate font-mono mt-0.5">{dbUser?.email || user?.email}</p>
           </div>
-          <DropdownMenuItem asChild className="cursor-pointer text-slate-200 focus:text-white focus:bg-cyan-500/20 rounded-xl my-0.5">
-            <Link href="/dashboard/settings" className="flex items-center gap-2">
+          <DropdownMenuItem className="cursor-pointer text-slate-200 focus:text-white focus:bg-cyan-500/20 rounded-xl my-0.5">
+            <Link href="/dashboard/settings" className="flex items-center gap-2 w-full">
               <User className="w-4 h-4 text-cyan-400" />
               <span>Profile Settings</span>
             </Link>

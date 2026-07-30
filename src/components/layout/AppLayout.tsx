@@ -6,6 +6,7 @@ import { TopBar } from "./TopBar";
 import { Toaster } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { CipherLoader } from "@/components/ui/CipherLoader";
+import { usePathname } from "next/navigation";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
