@@ -6,9 +6,9 @@ import { Home, Shield, Search, KeyRound, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { name: "Home", href: "/", icon: Home },
   { name: "Vault", href: "/dashboard", icon: Shield },
   { name: "Search", href: "/dashboard/search", icon: Search },
+  { name: "Generate", href: "/dashboard/generator", icon: KeyRound },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 

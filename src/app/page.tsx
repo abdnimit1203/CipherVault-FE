@@ -118,71 +118,71 @@ export default function LandingPage() {
           Next-Generation Zero-Knowledge Architecture
         </div>
         
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-5 leading-tight">
           Your digital secrets, <br className="hidden sm:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300">
             cryptographically secured.
           </span>
         </h1>
         
-        <p className="text-lg sm:text-xl text-slate-300 mb-10 max-w-2xl leading-relaxed">
+        <p className="text-base sm:text-lg text-slate-300 mb-8 max-w-xl leading-relaxed font-medium">
           A premium password manager built with zero-knowledge architecture. 
           Your credentials are encrypted locally on your device and never leave in plaintext.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-16">
+        <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto mb-12">
           <Link 
             href={user ? "/dashboard" : "/signup"} 
-            className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto rounded-full h-14 px-8 text-lg font-bold shadow-xl shadow-cyan-500/25")}
+            className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto rounded-full h-12 px-7 text-base font-bold shadow-xl shadow-cyan-500/25")}
           >
             {user ? "Open Your Vault" : "Create your Vault"}
           </Link>
           <Link 
             href={user ? "/dashboard" : "/login"} 
-            className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full sm:w-auto rounded-full h-14 px-8 text-lg font-bold border-white/20 bg-white/5 hover:bg-white/10 text-white")}
+            className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full sm:w-auto rounded-full h-12 px-7 text-base font-bold border-white/20 bg-white/5 hover:bg-white/10 text-white")}
           >
             {user ? "Go to Dashboard" : "Open Web Vault"}
           </Link>
         </div>
 
         {/* SECTION 1: Features (#features) */}
-        <section id="features" className="w-full pt-16 pb-12 border-t border-white/10 text-left">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 leading-snug">
+        <section id="features" className="w-full pt-12 pb-10 border-t border-white/10 text-left">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-2.5 leading-snug">
               Key Features Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300">Maximum Security</span>
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
+            <p className="text-slate-400 max-w-lg mx-auto text-xs sm:text-sm font-medium">
               Everything you need to store, organize, and manage your credentials with confidence.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-            <div className="glass-card p-8 rounded-3xl border-white/15 hover:border-cyan-400/40 transition-all duration-300 group">
-              <div className="w-12 h-12 bg-cyan-500/10 rounded-2xl flex items-center justify-center border border-cyan-500/20 mb-6 group-hover:scale-110 transition-transform">
-                <Lock className="w-6 h-6 text-cyan-300" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+            <div className="glass-card p-6 md:p-7 rounded-3xl border-white/15 hover:border-cyan-400/40 transition-all duration-300 group">
+              <div className="w-11 h-11 bg-cyan-500/10 rounded-2xl flex items-center justify-center border border-cyan-500/20 mb-5 group-hover:scale-110 transition-transform">
+                <Lock className="w-5 h-5 text-cyan-300" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Zero-Knowledge Architecture</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <h3 className="text-lg font-bold text-white mb-1.5">Zero-Knowledge Architecture</h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
                 Client-side AES-256-GCM encryption means your master key never leaves your device.
               </p>
             </div>
 
-            <div className="glass-card p-8 rounded-3xl border-white/15 hover:border-cyan-400/40 transition-all duration-300 group">
-              <div className="w-12 h-12 bg-cyan-500/10 rounded-2xl flex items-center justify-center border border-cyan-500/20 mb-6 group-hover:scale-110 transition-transform">
-                <UserCheck className="w-6 h-6 text-cyan-300" />
+            <div className="glass-card p-6 md:p-7 rounded-3xl border-white/15 hover:border-cyan-400/40 transition-all duration-300 group">
+              <div className="w-11 h-11 bg-cyan-500/10 rounded-2xl flex items-center justify-center border border-cyan-500/20 mb-5 group-hover:scale-110 transition-transform">
+                <UserCheck className="w-5 h-5 text-cyan-300" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Owner Radio Selector</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <h3 className="text-lg font-bold text-white mb-1.5">Owner Radio Selector</h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
                 Organize credentials with glass pill radio selectors: Personal, Family, Friend, or Other.
               </p>
             </div>
 
-            <div className="glass-card p-8 rounded-3xl border-white/15 hover:border-cyan-400/40 transition-all duration-300 group">
-              <div className="w-12 h-12 bg-cyan-500/10 rounded-2xl flex items-center justify-center border border-cyan-500/20 mb-6 group-hover:scale-110 transition-transform">
-                <KeyRound className="w-6 h-6 text-cyan-300" />
+            <div className="glass-card p-6 md:p-7 rounded-3xl border-white/15 hover:border-cyan-400/40 transition-all duration-300 group">
+              <div className="w-11 h-11 bg-cyan-500/10 rounded-2xl flex items-center justify-center border border-cyan-500/20 mb-5 group-hover:scale-110 transition-transform">
+                <KeyRound className="w-5 h-5 text-cyan-300" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Instant Generator</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <h3 className="text-lg font-bold text-white mb-1.5">Instant Generator</h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
                 Generate cryptographically strong, complex passwords for every account in a single tap.
               </p>
             </div>
@@ -190,12 +190,12 @@ export default function LandingPage() {
         </section>
 
         {/* SECTION 2: Security Deep Dive (#security) */}
-        <section id="security" className="w-full pt-16 pb-12 border-t border-white/10 text-left">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 leading-snug">
+        <section id="security" className="w-full pt-12 pb-10 border-t border-white/10 text-left">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-2.5 leading-snug">
               Zero-Knowledge <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300">Cryptographic Engine</span>
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
+            <p className="text-slate-400 max-w-lg mx-auto text-xs sm:text-sm font-medium">
               Your sensitive credentials remain encrypted even if servers are compromised.
             </p>
           </div>

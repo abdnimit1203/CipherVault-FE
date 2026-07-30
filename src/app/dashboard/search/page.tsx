@@ -178,25 +178,25 @@ export default function SearchPage() {
                   setSelectedItem(item);
                   setIsDialogOpen(true);
                 }}
-                className="glass-card p-4 rounded-2xl flex items-center justify-between hover:bg-white/10 transition-all duration-200 cursor-pointer border border-white/10 group"
+                className="glass-card p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/10 transition-all duration-200 cursor-pointer border border-white/10 group shadow-lg"
               >
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-sky-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-300 font-extrabold text-base shrink-0 group-hover:scale-105 transition-transform">
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-sky-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-300 font-extrabold text-base shrink-0 group-hover:scale-105 transition-transform shadow-inner">
                     {item.icon}
                   </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-white text-base truncate group-hover:text-cyan-300 transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-bold text-white text-base truncate group-hover:text-cyan-300 transition-colors max-w-[180px] sm:max-w-none">
                         {item.title}
                       </h4>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
                         {item.owner}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 truncate flex items-center gap-2 mt-0.5">
-                      <span>{item.username || "No username"}</span>
+                    <p className="text-xs text-slate-400 truncate flex items-center gap-1.5 mt-0.5 font-medium">
+                      <span className="truncate">{item.username || "No username"}</span>
                       {item.url && (
-                        <span className="text-slate-500 flex items-center gap-0.5">
+                        <span className="text-slate-500 truncate hidden sm:inline">
                           • {item.url.replace(/^https?:\/\//, '')}
                         </span>
                       )}
@@ -204,9 +204,11 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                <button className="px-3 py-1.5 rounded-xl bg-white/5 group-hover:bg-cyan-500/20 text-xs font-semibold text-slate-300 group-hover:text-cyan-300 transition-all shrink-0 border border-white/10">
-                  View Details
-                </button>
+                <div className="w-full sm:w-auto flex justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-white/10">
+                  <button className="w-full sm:w-auto px-4 py-2 sm:py-1.5 rounded-xl bg-cyan-500/10 group-hover:bg-cyan-500/20 text-cyan-300 text-xs font-bold text-center transition-all border border-cyan-500/25">
+                    View Details &rsaquo;
+                  </button>
+                </div>
               </motion.div>
             ))}
           </div>

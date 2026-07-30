@@ -27,6 +27,7 @@ export function PasswordDetailsDialog({
 }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const [showSecurityPrompt, setShowSecurityPrompt] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [pinOrPassword, setPinOrPassword] = useState("");
   const [countdown, setCountdown] = useState(15);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -57,6 +58,7 @@ export function PasswordDetailsDialog({
       setIsEditing(false);
       setIsRevealed(false);
       setShowSecurityPrompt(false);
+      setShowDeleteConfirm(false);
       setPinOrPassword("");
     }
   }, [item]);
@@ -65,17 +67,14 @@ export function PasswordDetailsDialog({
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isRevealed && countdown > 0) {
-      timer = setTimeout(() => setCountdown(c => c - 1), 1000);
-    } else if (countdown === 0 && isRevealed) {
+      timer = setInterval(() => setCountdown((prev) => prev - 1), 1000);
+    } else if (countdown === 0) {
       setIsRevealed(false);
-      setCountdown(15);
-      toast.info("Password hidden automatically for security.");
     }
-    return () => clearTimeout(timer);
+    return () => clearInterval(timer);
   }, [isRevealed, countdown]);
 
   const handleRevealRequest = () => {
-    if (isRevealed) return;
     setShowSecurityPrompt(true);
   };
 
@@ -219,8 +218,6 @@ export function PasswordDetailsDialog({
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Are you sure you want to delete "${item.title}"? This cannot be undone.`)) return;
-
     if (!auth.currentUser) return;
     setIsDeleting(true);
     try {
@@ -239,6 +236,7 @@ export function PasswordDetailsDialog({
       toast.error("Failed to delete credential.");
     } finally {
       setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -253,7 +251,38 @@ export function PasswordDetailsDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-[#0e1e34] border border-cyan-500/30 text-slate-100 rounded-3xl p-6 shadow-2xl backdrop-blur-2xl">
         
-        {!showSecurityPrompt ? (
+        {showDeleteConfirm ? (
+          /* CUSTOM DARK-GLASSY DELETE CONFIRMATION VIEW */
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2.5 text-rose-400 font-bold text-xl">
+                <Trash2 className="w-5 h-5 text-rose-400 shrink-0" />
+                <span>Delete Credential</span>
+              </DialogTitle>
+              <DialogDescription className="text-slate-300 text-sm leading-relaxed pt-2">
+                Are you sure you want to permanently delete <b className="text-white font-bold">{item.title}</b>? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="flex items-center justify-end gap-3 pt-6">
+              <Button 
+                variant="ghost" 
+                onClick={() => setShowDeleteConfirm(false)} 
+                disabled={isDeleting}
+                className="text-slate-400 hover:text-white rounded-2xl"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleDelete} 
+                disabled={isDeleting} 
+                className="bg-rose-600 hover:bg-rose-500 text-white font-bold px-6 rounded-2xl shadow-lg shadow-rose-600/30 flex items-center gap-2"
+              >
+                {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete Permanently"}
+              </Button>
+            </div>
+          </>
+        ) : !showSecurityPrompt ? (
           <>
             {/* Dialog Header with Edit & Delete Actions */}
             <DialogHeader className="flex flex-row items-center justify-between gap-4 pb-2 border-b border-white/10">
@@ -292,7 +321,7 @@ export function PasswordDetailsDialog({
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      onClick={handleDelete}
+                      onClick={() => setShowDeleteConfirm(true)}
                       disabled={isDeleting}
                       className="w-9 h-9 rounded-xl bg-white/5 hover:bg-rose-500/20 text-rose-400 border border-white/10"
                       title="Delete Item"
