@@ -26,16 +26,21 @@ export function Sidebar() {
 
   return (
     <aside className="hidden md:flex flex-col w-64 h-screen border-r border-white/10 glass-nav sticky top-0 z-20">
-      <div className="flex items-center h-20 px-4 border-b border-white/10">
-        <Link href="/" className="flex items-center hover:opacity-90 transition-opacity w-full">
+      <div className="flex items-center h-20 px-6 border-b border-white/10">
+        <Link href="/" className="flex items-center gap-3 font-bold text-xl tracking-tight hover:opacity-90 transition-opacity">
           <Image 
-            src="/logo_v2.png" 
-            alt="CipherVault by ABD Logo" 
-            width={200} 
-            height={52} 
-            className="h-10 w-auto object-contain drop-shadow-[0_0_12px_rgba(0,242,254,0.35)]" 
+            src="/app-logo-icon.svg" 
+            alt="ABD-CipherVault Logo" 
+            width={32} 
+            height={32} 
+            className="w-8 h-8 filter drop-shadow-[0_0_8px_rgba(0,242,254,0.6)]" 
             priority 
           />
+          <div className="flex flex-col">
+            <span className="font-orbitron font-extrabold text-base tracking-wider bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">
+              ABD-CipherVault
+            </span>
+          </div>
         </Link>
       </div>
 

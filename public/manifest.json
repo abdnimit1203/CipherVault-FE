@@ -1,6 +1,6 @@
 {
-  "name": "CipherVault",
-  "short_name": "CipherVault",
+  "name": "ABD-CipherVault",
+  "short_name": "ABD-CipherVault",
   "description": "Your digital life, cryptographically secured.",
   "start_url": "/",
   "display": "standalone",

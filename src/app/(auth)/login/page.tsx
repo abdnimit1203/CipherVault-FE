@@ -13,6 +13,7 @@ import { auth } from "@/lib/firebase";
 import { deriveMasterKey } from "@/lib/crypto";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { Footer } from "@/components/layout/Footer";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -104,27 +105,32 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#0b1728] relative selection:bg-cyan-500/30">
-      <Link href="/" className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center hover:opacity-90 transition-opacity">
+      <Link href="/" className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 font-bold tracking-tight hover:opacity-90 transition-opacity">
         <Image 
-          src="/logo_v2.png" 
-          alt="CipherVault by ABD Logo" 
-          width={180} 
-          height={48} 
-          className="h-9 w-auto object-contain drop-shadow-[0_0_12px_rgba(0,242,254,0.35)]" 
+          src="/app-logo-icon.svg" 
+          alt="ABD-CipherVault Logo" 
+          width={28} 
+          height={28} 
+          className="w-7 h-7 filter drop-shadow-[0_0_8px_rgba(0,242,254,0.6)]" 
           priority 
         />
+        <span className="font-orbitron font-extrabold text-base tracking-wider bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">
+          ABD-CipherVault
+        </span>
       </Link>
 
       <div className="w-full max-w-md space-y-8 mt-12 md:mt-0 relative z-10">
         <div className="flex flex-col items-center justify-center space-y-3 text-center">
-          <Image 
-            src="/logo_v2.png" 
-            alt="CipherVault by ABD Logo" 
-            width={240} 
-            height={60} 
-            className="h-12 w-auto object-contain drop-shadow-[0_0_20px_rgba(0,242,254,0.45)] mb-1" 
-            priority 
-          />
+          <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 shadow-inner mb-1">
+            <Image 
+              src="/app-logo-icon.svg" 
+              alt="ABD-CipherVault Logo" 
+              width={48} 
+              height={48} 
+              className="w-12 h-12 filter drop-shadow-[0_0_12px_rgba(0,242,254,0.7)]" 
+              priority 
+            />
+          </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-white">Welcome back</h1>
           <p className="text-sm text-slate-400">
             Enter your credentials to access your secure encrypted vault

@@ -46,56 +46,56 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch Vault Items
-  useEffect(() => {
-    const fetchItems = async () => {
-      if (!masterKey || !auth.currentUser) return;
+  const fetchItems = async () => {
+    if (!masterKey || !auth.currentUser) return;
+    
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+      const response = await axios.get(`${apiUrl}/vault`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const encryptedItems = response.data.items;
       
-      try {
-        const token = await auth.currentUser.getIdToken();
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-        const response = await axios.get(`${apiUrl}/vault`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+      // Decrypt all items
+      const decryptedItems = await Promise.all(
+        encryptedItems.map(async (item: any) => {
+          try {
+            const decryptedData = await decryptVaultItem(item.encryptedData, item.iv, masterKey);
+            return {
+              id: item._id,
+              title: item.title,
+              category: item.category,
+              icon: item.title.charAt(0).toUpperCase(),
+              ...decryptedData
+            };
+          } catch (err) {
+            console.error("Failed to decrypt item:", item._id, err);
+            return {
+              id: item._id,
+              title: item.title,
+              category: item.category,
+              icon: '?',
+              username: "Encryption Error",
+              password: "",
+              url: "",
+              notes: ""
+            };
+          }
+        })
+      );
+      
+      setVaultItems(decryptedItems);
+    } catch (error) {
+      console.error("Error fetching vault items:", error);
+      toast.error("Failed to load vault items.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        const encryptedItems = response.data.items;
-        
-        // Decrypt all items
-        const decryptedItems = await Promise.all(
-          encryptedItems.map(async (item: any) => {
-            try {
-              const decryptedData = await decryptVaultItem(item.encryptedData, item.iv, masterKey);
-              return {
-                id: item._id,
-                title: item.title,
-                category: item.category,
-                icon: item.title.charAt(0).toUpperCase(),
-                ...decryptedData
-              };
-            } catch (err) {
-              console.error("Failed to decrypt item:", item._id, err);
-              return {
-                id: item._id,
-                title: item.title,
-                category: item.category,
-                icon: '?',
-                username: "Encryption Error",
-                password: "",
-                url: "",
-                notes: ""
-              };
-            }
-          })
-        );
-        
-        setVaultItems(decryptedItems);
-      } catch (error) {
-        console.error("Error fetching vault items:", error);
-        toast.error("Failed to load vault items.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
+  useEffect(() => {
     fetchItems();
   }, [masterKey]);
 
@@ -227,6 +227,8 @@ export default function DashboardPage() {
         isOpen={isDialogOpen} 
         onClose={() => setIsDialogOpen(false)} 
         item={selectedItem} 
+        onItemUpdated={fetchItems}
+        onItemDeleted={fetchItems}
       />
     </div>
   );

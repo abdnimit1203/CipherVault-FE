@@ -11,6 +11,7 @@ export interface DBUser {
   email: string;
   fullName: string;
   profilePictureUrl?: string;
+  securityPin?: string;
   createdAt: string;
   updatedAt: string;
 }

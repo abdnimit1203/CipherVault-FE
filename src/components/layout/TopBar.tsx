@@ -17,15 +17,18 @@ export function TopBar() {
 
   return (
     <header className="md:hidden sticky top-0 left-0 w-full glass-nav border-b border-white/10 z-40 h-16 flex items-center px-4 justify-between">
-      <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
+      <Link href="/" className="flex items-center gap-2 font-bold tracking-tight hover:opacity-90 transition-opacity">
         <Image 
-          src="/logo_v2.png" 
-          alt="CipherVault by ABD Logo" 
-          width={160} 
-          height={42} 
-          className="h-8 w-auto object-contain drop-shadow-[0_0_10px_rgba(0,242,254,0.35)]" 
+          src="/app-logo-icon.svg" 
+          alt="ABD-CipherVault Logo" 
+          width={24} 
+          height={24} 
+          className="w-6 h-6 filter drop-shadow-[0_0_6px_rgba(0,242,254,0.6)]" 
           priority 
         />
+        <span className="font-orbitron font-extrabold text-base tracking-wider bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">
+          ABD-CipherVault
+        </span>
       </Link>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 bg-white/10 hover:bg-white/15 px-3 py-1 rounded-full border border-white/15 backdrop-blur-md outline-none transition-all">

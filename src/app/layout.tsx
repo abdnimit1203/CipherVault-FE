@@ -18,7 +18,7 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: "CipherVault by ABD",
+  title: "ABD-CipherVault by ABD",
   description: "Your digital life, cryptographically secured with zero-knowledge AES-256.",
   manifest: "/manifest.json",
 };
