@@ -19,7 +19,7 @@ export function Footer() {
             target="_blank"
             className="font-bold text-cyan-400 hover:text-cyan-300 transition"
           >
-            ABD NIMIT
+            Abdullah Ibne Ali
           </Link>
           <span className="hidden sm:inline text-slate-600">|</span>
           <span>© {currentYear} <span className="font-bold text-slate-200">ABD-CipherVault</span>. All rights reserved.</span>

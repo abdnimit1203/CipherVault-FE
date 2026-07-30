@@ -18,9 +18,48 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: "ABD-CipherVault by ABD",
-  description: "Your digital life, cryptographically secured with zero-knowledge AES-256.",
+  metadataBase: new URL("https://abd-ciphervault.netlify.app"),
+  title: {
+    default: "ABD-CipherVault — Zero-Knowledge Password Manager by Abdullah Ibne Ali",
+    template: "%s | ABD-CipherVault"
+  },
+  description: "ABD-CipherVault is a zero-knowledge, client-side encrypted password manager built by Abdullah Ibne Ali (ABD NIMIT). Secure your credentials with AES-256-GCM encryption, PBKDF2 key derivation, and modern glassmorphism UI.",
+  keywords: [
+    "ABD-CipherVault",
+    "CipherVault",
+    "Abdullah Ibne Ali",
+    "ABD NIMIT",
+    "Abdullah Ibne Ali Portfolio",
+    "Zero Knowledge Password Manager",
+    "Encrypted Vault",
+    "AES-256 Encryption",
+    "Password Generator",
+    "Security Vault",
+    "Netlify Password Manager",
+    "Web Application Developer"
+  ],
+  authors: [
+    { name: "Abdullah Ibne Ali (ABD NIMIT)", url: "https://abdullah-portfolio-frontend.netlify.app/" }
+  ],
+  creator: "Abdullah Ibne Ali",
+  publisher: "Abdullah Ibne Ali",
   manifest: "/manifest.json",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://abd-ciphervault.netlify.app",
+    title: "ABD-CipherVault — Zero-Knowledge Password Manager by Abdullah Ibne Ali",
+    description: "Client-side encrypted password manager built by Abdullah Ibne Ali. Your passwords are encrypted locally with zero-knowledge AES-256 security.",
+    siteName: "ABD-CipherVault",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ABD-CipherVault — Zero-Knowledge Password Manager by Abdullah Ibne Ali",
+    description: "Client-side encrypted password manager built by Abdullah Ibne Ali.",
+  },
+  alternates: {
+    canonical: "https://abd-ciphervault.netlify.app"
+  }
 };
 
 export const viewport: Viewport = {

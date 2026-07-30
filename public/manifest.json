@@ -1,7 +1,7 @@
 {
-  "name": "ABD-CipherVault",
+  "name": "ABD-CipherVault — Zero-Knowledge Password Manager",
   "short_name": "ABD-CipherVault",
-  "description": "Your digital life, cryptographically secured.",
+  "description": "Zero-Knowledge client-side encrypted password manager built by Abdullah Ibne Ali.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#09090b",
