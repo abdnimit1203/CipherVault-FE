@@ -248,7 +248,7 @@ export default function SettingsPage() {
             Security PIN / Private Reveal Code
           </CardTitle>
           <CardDescription className="text-slate-300 text-sm leading-relaxed">
-            Set a 4-digit or 6-digit Private PIN code (e.g. <b className="text-cyan-300 font-mono">1655</b>). 
+            Set a 4-digit or 6-digit Private PIN code. 
             This PIN code is required to reveal or edit passwords in your vault—protecting both Master Password and Google users from unauthorized reveals!
           </CardDescription>
         </CardHeader>

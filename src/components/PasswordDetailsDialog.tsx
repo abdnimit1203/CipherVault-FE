@@ -112,7 +112,7 @@ export function PasswordDetailsDialog({
         );
 
         if (dbUser) setDbUser({ ...dbUser, securityPin: pinRes.data.user.securityPin });
-        toast.success(`Security PIN (${pinOrPassword.trim()}) configured successfully!`);
+        toast.success("Security PIN configured successfully!");
         setShowSecurityPrompt(false);
         setIsRevealed(true);
         setPinOrPassword("");
@@ -512,9 +512,9 @@ export function PasswordDetailsDialog({
               </DialogTitle>
               <DialogDescription className="text-slate-300 text-xs leading-relaxed">
                 {hasPinConfigured ? (
-                  <>Enter your 4-digit Private PIN code (e.g. <b className="text-cyan-300 font-mono">1655</b>) or Master Password to reveal credentials for <b className="text-cyan-300">{item.title}</b>.</>
+                  <>Enter your 4-digit Private PIN code or Master Password to reveal credentials for <b className="text-cyan-300">{item.title}</b>.</>
                 ) : (
-                  <>You haven&apos;t set a Private PIN yet! Enter a 4-digit PIN (e.g. <b className="text-cyan-300 font-mono">1655</b>) below to set it now and reveal credentials for <b className="text-cyan-300">{item.title}</b>.</>
+                  <>You haven&apos;t set a Private PIN yet! Enter a 4-digit or 6-digit PIN below to set it now and reveal credentials for <b className="text-cyan-300">{item.title}</b>.</>
                 )}
               </DialogDescription>
             </DialogHeader>
@@ -522,12 +522,12 @@ export function PasswordDetailsDialog({
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="verify-pin" className="text-slate-300 font-semibold text-xs">
-                  {hasPinConfigured ? "Security PIN / Master Password" : "Create 4-Digit Security PIN (e.g. 1655)"}
+                  {hasPinConfigured ? "Security PIN / Master Password" : "Create Private Security PIN"}
                 </Label>
                 <Input 
                   id="verify-pin" 
                   type="password" 
-                  placeholder={hasPinConfigured ? "Enter PIN (e.g. 1655)" : "Enter new 4-digit PIN (e.g. 1655)"}
+                  placeholder={hasPinConfigured ? "••••••••" : "Enter new PIN (e.g. 4-digits)"}
                   value={pinOrPassword}
                   onChange={(e) => setPinOrPassword(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleVerifyOrSetPin()}
