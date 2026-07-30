@@ -127,21 +127,27 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#0b1728] pb-20 md:pb-4 relative selection:bg-cyan-500/30">
-      <Link href="/" className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-primary font-bold text-xl tracking-tight hover:opacity-90 transition-opacity">
-        <div className="p-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-          <Image src="/CipherVault-logo.svg" alt="CipherVault Logo" width={24} height={24} className="w-6 h-6" />
-        </div>
-        <span className="font-orbitron font-extrabold text-base tracking-wider bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent flex items-baseline">
-          CipherVault
-          <sub className="text-[9px] font-sans font-bold text-cyan-400/90 ml-1 tracking-normal">by ABD</sub>
-        </span>
+      <Link href="/" className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center hover:opacity-90 transition-opacity">
+        <Image 
+          src="/logo_v2.png" 
+          alt="CipherVault by ABD Logo" 
+          width={180} 
+          height={48} 
+          className="h-9 w-auto object-contain drop-shadow-[0_0_12px_rgba(0,242,254,0.35)]" 
+          priority 
+        />
       </Link>
 
       <div className="w-full max-w-md space-y-8 mt-12 md:mt-0 relative z-10">
-        <div className="flex flex-col items-center justify-center space-y-2 text-center mt-6">
-          <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center mb-2 border border-cyan-500/20 shadow-inner">
-            <Image src="/CipherVault-logo.svg" alt="CipherVault Logo" width={36} height={36} className="w-9 h-9" />
-          </div>
+        <div className="flex flex-col items-center justify-center space-y-3 text-center mt-6">
+          <Image 
+            src="/logo_v2.png" 
+            alt="CipherVault by ABD Logo" 
+            width={240} 
+            height={60} 
+            className="h-12 w-auto object-contain drop-shadow-[0_0_20px_rgba(0,242,254,0.45)] mb-1" 
+            priority 
+          />
           <h1 className="text-3xl font-extrabold tracking-tight text-white">Create your Vault</h1>
           <p className="text-sm text-slate-400">
             Sign up to securely store and manage your passwords
