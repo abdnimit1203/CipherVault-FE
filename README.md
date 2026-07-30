@@ -18,19 +18,17 @@
 
 ## 📸 Screenshots Gallery
 
-*Add your app screenshots inside `public/screenshots/` to visualize the app in action:*
-
 | Landing Page | Glassmorphism Dashboard |
 | :---: | :---: |
-| ![Landing Page](/public/screenshots/01-landing-page.png) | ![Glassmorphism Dashboard](/public/screenshots/02-dashboard-glass.png) |
+| ![Landing Page](public/screenshots/01-landing-page.png) | ![Glassmorphism Dashboard](public/screenshots/02-dashboard-glass.png) |
 
 | Add Credential (Owner Selector) | Password Reveal & Security Dialog |
 | :---: | :---: |
-| ![Add Credential](./public/screenshots/03-add-item-owner.png) | ![Login Screen](./public/screenshots/04-login-page.png) |
+| ![Add Credential](public/screenshots/03-add-item-owner.png) | ![Login Screen](public/screenshots/04-login-page.png) |
 
 | Profile & ImgBB Avatar Upload | Mobile Thumb-Friendly View |
 | :---: | :---: |
-| ![Profile Settings](/public/screenshots/05-profile-settings.png) | ![Mobile Navigation](/public/screenshots/06-mobile-view.png) |
+| ![Profile Settings](public/screenshots/05-profile-settings.png) | ![Mobile Navigation](public/screenshots/06-mobile-view.png) |
 
 ---
 
