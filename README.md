@@ -2,6 +2,7 @@
 
 > **Your digital life, cryptographically secured with Zero-Knowledge AES-256-GCM encryption.**
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bde6422c-c558-477a-a43d-754bcf05b162/deploy-status)](https://app.netlify.com/projects/abd-ciphervault/deploys)
 [![Live App](https://img.shields.io/badge/Live%20Demo-CipherVault-00f2fe?style=for-the-badge&logo=netlify)](https://abd-ciphervault.netlify.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.12-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)

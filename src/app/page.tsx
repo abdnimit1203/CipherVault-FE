@@ -61,7 +61,7 @@ export default function LandingPage() {
                 )}
                 <span className="font-semibold text-sm text-slate-200">{dbUser?.fullName?.split(' ')[0] || "User"}</span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 glass-card border-white/15 text-slate-200 mt-2">
+              <DropdownMenuContent align="end" className="w-56 bg-[#0c192c]/95 border border-cyan-500/30 text-slate-100 backdrop-blur-2xl shadow-2xl rounded-2xl p-2 mt-2 z-50">
                 <DropdownMenuGroup>
                   <DropdownMenuLabel className="text-slate-400 text-xs">My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-white/10" />
@@ -131,11 +131,17 @@ export default function LandingPage() {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-16">
-          <Link href="/signup" className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto rounded-full h-14 px-8 text-lg font-bold shadow-xl shadow-cyan-500/25")}>
-            Create your Vault
+          <Link 
+            href={user ? "/dashboard" : "/signup"} 
+            className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto rounded-full h-14 px-8 text-lg font-bold shadow-xl shadow-cyan-500/25")}
+          >
+            {user ? "Open Your Vault" : "Create your Vault"}
           </Link>
-          <Link href="/login" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full sm:w-auto rounded-full h-14 px-8 text-lg font-bold border-white/20 bg-white/5 hover:bg-white/10 text-white")}>
-            Open Web Vault
+          <Link 
+            href={user ? "/dashboard" : "/login"} 
+            className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full sm:w-auto rounded-full h-14 px-8 text-lg font-bold border-white/20 bg-white/5 hover:bg-white/10 text-white")}
+          >
+            {user ? "Go to Dashboard" : "Open Web Vault"}
           </Link>
         </div>
 

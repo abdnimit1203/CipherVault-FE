@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShieldCheck, Plus, Search, MoreVertical, Key, AlertTriangle, ShieldAlert } from "lucide-react";
+import { ShieldCheck, Plus, Search, MoreVertical, Key, AlertTriangle, ShieldAlert, Clock } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 
 const PasswordDetailsDialog = dynamic(
   () => import("@/components/PasswordDetailsDialog").then(mod => mod.PasswordDetailsDialog),
@@ -22,6 +23,8 @@ import { toast } from "sonner";
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good Day");
   const [greetingIcon, setGreetingIcon] = useState("👋");
+  const [currentTime, setCurrentTime] = useState<string>("");
+  const [currentDate, setCurrentDate] = useState<string>("");
   
   // Dialog state
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -39,9 +42,18 @@ export default function DashboardPage() {
       setGreeting("Good Evening");
       setGreetingIcon("🌇");
     }
+
+    const updateClock = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setCurrentDate(now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
+    };
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
+    return () => clearInterval(timer);
   }, []);
 
-  const { masterKey } = useAuth();
+  const { user, dbUser, masterKey } = useAuth();
   const [vaultItems, setVaultItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -102,22 +114,42 @@ export default function DashboardPage() {
   return (
     <div className="flex-1 p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
       
-      {/* Header Section */}
-      <section className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
-            <span>{greetingIcon}</span>
-            <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">{greeting}</span>
-          </h1>
-          <p className="text-slate-400 flex items-center gap-1.5 text-sm md:text-base font-medium">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            Your vault is locked & protected with AES-GCM-256.
-          </p>
+      {/* Floating Greeting Card Section */}
+      <motion.section 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="glass-card p-6 md:p-8 rounded-3xl relative overflow-hidden border border-cyan-500/20 shadow-2xl bg-gradient-to-r from-cyan-950/20 via-sky-950/10 to-indigo-950/20"
+      >
+        <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                <span>{greetingIcon}</span>
+                <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+                  {greeting}, {dbUser?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Member'}!
+                </span>
+              </h1>
+              {currentTime && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-medium shadow-inner">
+                  <Clock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                  <span>{currentTime}</span>
+                  <span className="text-slate-500">•</span>
+                  <span className="text-slate-300">{currentDate}</span>
+                </div>
+              )}
+            </div>
+            <p className="text-slate-300 text-xs md:text-sm font-medium flex items-center gap-1.5 pt-0.5">
+              <ShieldCheck className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+              <span>Your vault is protected with zero-knowledge AES-256-GCM encryption.</span>
+            </p>
+          </div>
+          <Link href="/dashboard/add" className={cn(buttonVariants({ variant: "default", size: "lg" }), "hidden md:flex gap-2 rounded-full shadow-lg shadow-sky-500/25 shrink-0")}>
+            <Plus className="w-5 h-5" /> Add Password
+          </Link>
         </div>
-        <Link href="/dashboard/add" className={cn(buttonVariants({ variant: "default", size: "lg" }), "hidden md:flex gap-2 rounded-full shadow-lg shadow-sky-500/25")}>
-          <Plus className="w-5 h-5" /> Add Password
-        </Link>
-      </section>
+      </motion.section>
 
       {/* Security Score Card - Light Glass Highlight Container (Inspired by Reference UI Statistics panel) */}
       <div className="glass-card-light p-6 md:p-8 rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl">

@@ -5,25 +5,14 @@ import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { Toaster } from "sonner";
 import { useAuth } from "@/context/AuthContext";
-import { Loader2 } from "lucide-react";
-
-import { usePathname } from "next/navigation";
+import { CipherLoader } from "@/components/ui/CipherLoader";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#0b1728]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-            <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
-          </div>
-          <p className="text-sm font-medium text-slate-400 animate-pulse">Decrypting session...</p>
-        </div>
-      </div>
-    );
+    return <CipherLoader size="fullscreen" text="Decrypting Vault Session..." />;
   }
 
   const isPublicPage = pathname === "/" || pathname === "/login" || pathname === "/signup";
