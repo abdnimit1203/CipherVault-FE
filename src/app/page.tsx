@@ -27,36 +27,47 @@ export default function LandingPage() {
       
       {/* Navbar */}
       <header className="flex items-center justify-between p-6 max-w-7xl mx-auto w-full relative z-10">
-        <Link href="/" className="flex items-center gap-2 text-primary font-bold text-xl tracking-tight">
-          <Image src="/CipherVault-logo.svg" alt="CipherVault Logo" width={32} height={32} className="w-8 h-8" />
-          <span>CipherVault</span>
+        <Link href="/" className="flex items-center gap-3 font-bold text-xl tracking-tight hover:opacity-90 transition-opacity">
+          <div className="p-2 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 shadow-inner">
+            <Image src="/CipherVault-logo.svg" alt="CipherVault Logo" width={28} height={28} className="w-7 h-7" />
+          </div>
+          <span className="font-orbitron font-extrabold text-lg tracking-wider bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent flex items-baseline">
+            CipherVault
+            <sub className="text-[10px] font-sans font-bold text-cyan-400/90 ml-1 tracking-normal">by ABD</sub>
+          </span>
         </Link>
         <nav className="flex items-center gap-4">
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "default" }), "rounded-full bg-primary/10 hover:bg-primary/20 px-4 py-2 flex items-center gap-2")}>
-                <User className="w-5 h-5 text-primary" />
-                <span className="font-medium text-sm">{dbUser?.fullName?.split(' ')[0] || "User"}</span>
+              <DropdownMenuTrigger className={cn(buttonVariants({ variant: "ghost", size: "default" }), "rounded-full bg-white/10 hover:bg-white/15 border border-white/15 px-3 py-1.5 flex items-center gap-2.5 backdrop-blur-md outline-none")}>
+                {dbUser?.profilePictureUrl || user?.photoURL ? (
+                  <img src={dbUser?.profilePictureUrl || user?.photoURL || ''} alt="User Avatar" className="w-7 h-7 rounded-full object-cover border border-cyan-400/50" />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs">
+                    {dbUser?.fullName?.charAt(0) || user?.email?.charAt(0) || <User className="w-4 h-4 text-cyan-400" />}
+                  </div>
+                )}
+                <span className="font-semibold text-sm text-slate-200">{dbUser?.fullName?.split(' ')[0] || "User"}</span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 glass-card border-white/15 text-slate-200">
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuLabel className="text-slate-400 text-xs">My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem className="focus:bg-white/10 rounded-xl">
                     <Link href="/dashboard" className="cursor-pointer flex items-center w-full">
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <LayoutDashboard className="mr-2 h-4 w-4 text-cyan-400" />
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="focus:bg-white/10 rounded-xl">
                     <Link href="/dashboard/settings" className="cursor-pointer flex items-center w-full">
-                      <Settings className="mr-2 h-4 w-4" />
+                      <Settings className="mr-2 h-4 w-4 text-cyan-400" />
                       <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:text-destructive">
+                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuItem onClick={logout} className="cursor-pointer text-rose-300 focus:text-rose-200 focus:bg-rose-500/20 rounded-xl">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -64,10 +75,10 @@ export default function LandingPage() {
             </DropdownMenu>
           ) : (
             <>
-              <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+              <Link href="/login" className="text-sm font-semibold text-slate-300 hover:text-cyan-300 transition-colors hidden sm:block">
                 Log in
               </Link>
-              <Link href="/signup" className={cn(buttonVariants({}), "rounded-full px-6")}>
+              <Link href="/signup" className={cn(buttonVariants({ variant: "default" }), "rounded-full px-6 shadow-lg shadow-sky-500/25")}>
                 Get Started
               </Link>
             </>

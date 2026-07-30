@@ -23,16 +23,21 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
   return (
-    <div className="flex h-screen w-full bg-muted/30 overflow-hidden">
+    <div className="flex h-screen w-full bg-[#0b1728] text-slate-100 overflow-hidden relative selection:bg-cyan-500/30">
+      {/* Ambient background light orbs */}
+      <div className="pointer-events-none absolute -top-40 -left-40 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute top-1/3 -right-40 w-96 h-96 bg-indigo-500/15 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 left-1/3 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+
       {/* Desktop Sidebar */}
       <Sidebar />
 
-      <div className="flex flex-col flex-1 w-full h-full overflow-hidden">
+      <div className="flex flex-col flex-1 w-full h-full overflow-hidden relative z-10">
         {/* Mobile TopBar */}
         <TopBar />
 
         {/* Main Content Area */}
-        <main className="flex-1 w-full overflow-y-auto pb-16 md:pb-0 relative">
+        <main className="flex-1 w-full overflow-y-auto pb-20 md:pb-6 relative">
           {children}
         </main>
 

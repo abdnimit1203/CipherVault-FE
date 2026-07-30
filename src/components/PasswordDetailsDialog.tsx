@@ -90,20 +90,22 @@ export function PasswordDetailsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md glass-card border-white/20 text-slate-100 rounded-3xl p-6 shadow-2xl">
         
         {!showMasterPrompt ? (
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm border border-primary/20">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 text-cyan-300 flex items-center justify-center font-bold text-lg border border-white/15">
                   {item.icon}
                 </div>
-                {item.title}
+                <div>
+                  <h3 className="font-extrabold text-xl text-white">{item.title}</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 mt-1">
+                    Owner: {item.owner || "Personal"}
+                  </span>
+                </div>
               </DialogTitle>
-              <DialogDescription>
-                {item.category} • Owned by {item.owner || "Personal"}
-              </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-6 py-4">

@@ -24,15 +24,16 @@ export default function AddPasswordPage() {
 
   // Form states
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [url, setUrl] = useState("");
   const [notes, setNotes] = useState("");
-  const [owner, setOwner] = useState("Personal");
+  const [owner, setOwner] = useState<"Personal" | "Family" | "Friend" | "Other">("Personal");
+
+  const ownerOptions = ["Personal", "Family", "Friend", "Other"] as const;
 
   const handleGenerate = () => {
-    // Mock generate password
+    // Generate secure password
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
     let pass = "";
     for (let i = 0; i < 16; i++) {
@@ -71,7 +72,6 @@ export default function AddPasswordPage() {
       
       await axios.post(`${apiUrl}/vault`, {
         title,
-        category: category || "Uncategorized",
         encryptedData,
         iv
       }, {
@@ -94,33 +94,49 @@ export default function AddPasswordPage() {
     <div className="flex-1 p-4 md:p-8 max-w-3xl mx-auto space-y-6">
       
       <div className="flex items-center gap-4">
-        <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "rounded-full flex items-center justify-center")}>
+        <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10")}>
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Add New Item</h1>
-          <p className="text-sm text-muted-foreground">Securely store a new credential in your vault.</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-white">Add New Item</h1>
+          <p className="text-sm text-slate-400">Securely encrypt and store a new credential in your vault.</p>
         </div>
       </div>
 
       <form onSubmit={handleSave}>
-        <Card className="border-border shadow-sm">
-          <CardContent className="p-6 space-y-6">
+        <Card className="glass-card border-white/15 shadow-2xl rounded-3xl">
+          <CardContent className="p-6 md:p-8 space-y-6">
             
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="title">Title / Website Name *</Label>
+                <Label htmlFor="title" className="text-slate-300">Title / Website Name *</Label>
                 <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Google, Netflix, Bank of America" required />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. Finance, Entertainment" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="owner">Owner</Label>
-                <Input id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="e.g. Personal, Work, Mom" />
+              {/* Owner Selector Radio Buttons */}
+              <div className="space-y-2.5">
+                <Label className="text-slate-300">Credential Owner *</Label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {ownerOptions.map((option) => {
+                    const isSelected = owner === option;
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setOwner(option)}
+                        className={cn(
+                          "flex items-center justify-center py-2.5 px-4 rounded-2xl text-xs font-bold transition-all duration-200 border cursor-pointer select-none",
+                          isSelected
+                            ? "bg-gradient-to-r from-sky-500/30 to-indigo-500/20 text-cyan-300 border-cyan-400/50 shadow-lg shadow-cyan-500/10 scale-[1.02]"
+                            : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white"
+                        )}
+                      >
+                        <span className={cn("w-2 h-2 rounded-full mr-2", isSelected ? "bg-cyan-400" : "bg-slate-500")} />
+                        {option}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 

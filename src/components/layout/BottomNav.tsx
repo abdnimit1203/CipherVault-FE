@@ -19,8 +19,8 @@ export function BottomNav() {
   if (pathname === "/login" || pathname === "/signup" || pathname === "/") return null;
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 w-full bg-background/80 backdrop-blur-lg border-t border-border z-50 pb-safe">
-      <div className="flex items-center justify-around h-16">
+    <div className="md:hidden fixed bottom-3 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass-nav border border-white/15 rounded-full z-50 shadow-2xl backdrop-blur-2xl px-2 py-1.5">
+      <div className="flex items-center justify-around h-12">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -29,12 +29,14 @@ export function BottomNav() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center w-full h-full space-y-1 text-muted-foreground transition-colors",
-                isActive && "text-primary"
+                "flex flex-col items-center justify-center py-1 px-3 rounded-full transition-all duration-200",
+                isActive 
+                  ? "text-cyan-300 bg-white/10 border border-white/15 shadow-inner scale-105" 
+                  : "text-slate-400 hover:text-slate-200"
               )}
             >
-              <Icon className={cn("w-6 h-6", isActive && "fill-primary/20")} strokeWidth={isActive ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{item.name}</span>
+              <Icon className={cn("w-5 h-5", isActive ? "text-cyan-300" : "text-slate-400")} strokeWidth={isActive ? 2.5 : 2} />
+              <span className="text-[10px] font-medium tracking-tight mt-0.5">{item.name}</span>
             </Link>
           );
         })}

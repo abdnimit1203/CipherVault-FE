@@ -38,7 +38,7 @@ export function buf2hex(buffer: Uint8Array): string {
 async function importKey(rawKey: Uint8Array): Promise<CryptoKey> {
   return await crypto.subtle.importKey(
     "raw",
-    rawKey,
+    rawKey.buffer as ArrayBuffer,
     { name: "AES-GCM" },
     false,
     ["encrypt", "decrypt"]
@@ -86,10 +86,10 @@ export async function encryptVaultItem(data: any, masterKey: Uint8Array): Promis
   const encryptedBuffer = await crypto.subtle.encrypt(
     {
       name: "AES-GCM",
-      iv: iv
+      iv: iv as BufferSource
     },
     key,
-    encodedData
+    encodedData as BufferSource
   );
 
   return {
@@ -113,10 +113,10 @@ export async function decryptVaultItem(encryptedData: string, iv: string, master
   const decryptedBuffer = await crypto.subtle.decrypt(
     {
       name: "AES-GCM",
-      iv: ivBuffer
+      iv: ivBuffer as BufferSource
     },
     key,
-    dataBuffer
+    dataBuffer as BufferSource
   );
 
   const decodedString = new TextDecoder().decode(decryptedBuffer);
