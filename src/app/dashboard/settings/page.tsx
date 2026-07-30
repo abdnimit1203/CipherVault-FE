@@ -13,16 +13,25 @@ import { auth } from "@/lib/firebase";
 import axios from "axios";
 import { toast } from "sonner";
 
+import { deriveMasterKey } from "@/lib/crypto";
+
 export default function SettingsPage() {
-  const { dbUser, setDbUser, user, logout } = useAuth();
+  const { dbUser, setDbUser, user, masterKey, logout } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   // Security PIN State
   const [pinInput, setPinInput] = useState("");
+  const [confirmPinInput, setConfirmPinInput] = useState("");
+  const [currentVerificationInput, setCurrentVerificationInput] = useState("");
+  
+  const [isChangingPin, setIsChangingPin] = useState(false);
+  const [isVerifyingCurrent, setIsVerifyingCurrent] = useState(false);
+  const [isCurrentVerified, setIsCurrentVerified] = useState(false);
   const [isSavingPin, setIsSavingPin] = useState(false);
 
   const avatarUrl = dbUser?.profilePictureUrl || user?.photoURL;
+  const hasPin = Boolean(dbUser?.securityPin);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -50,7 +59,6 @@ export default function SettingsPage() {
       } else if (response.data.user) {
         setDbUser(response.data.user);
       }
-
       toast.success("Profile picture updated successfully!");
     } catch (error: any) {
       console.error("Avatar upload error:", error);
@@ -60,9 +68,70 @@ export default function SettingsPage() {
     }
   };
 
+  // 1. Verify Current PIN or Master Password before allowing PIN update
+  const handleVerifyCurrentPin = async () => {
+    const input = currentVerificationInput.trim();
+    if (!input) {
+      toast.error("Please enter your current PIN or Master Password.");
+      return;
+    }
+    if (!auth.currentUser) return;
+
+    setIsVerifyingCurrent(true);
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
+      // Try verifying PIN via backend
+      try {
+        const verifyRes = await axios.post(
+          `${apiUrl}/auth/verify-pin`,
+          { pin: input },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (verifyRes.data.success) {
+          setIsCurrentVerified(true);
+          toast.success("Identity verified! Set your new Security PIN below.");
+          setCurrentVerificationInput("");
+          return;
+        }
+      } catch (pinErr: any) {
+        // Fallback to checking Master Password if PIN check failed
+        const userEmail = dbUser?.email || user?.email;
+        if (masterKey && userEmail) {
+          const derived = await deriveMasterKey(input, userEmail);
+          const isValidMasterPassword =
+            derived.length === masterKey.length &&
+            derived.every((val, i) => val === masterKey[i]);
+
+          if (isValidMasterPassword) {
+            setIsCurrentVerified(true);
+            toast.success("Master Password verified! Set your new Security PIN below.");
+            setCurrentVerificationInput("");
+            return;
+          }
+        }
+
+        toast.error(pinErr.response?.data?.error || "Incorrect Security PIN or Master Password.");
+      }
+    } catch (error: any) {
+      console.error("Verification error:", error);
+      toast.error("Failed to verify identity.");
+    } finally {
+      setIsVerifyingCurrent(false);
+    }
+  };
+
+  // 2. Save / Update Security PIN
   const handleSavePin = async () => {
     if (!pinInput.trim() || pinInput.trim().length < 4) {
       toast.error("Security PIN must be at least 4 digits/characters long.");
+      return;
+    }
+
+    if (pinInput.trim() !== confirmPinInput.trim()) {
+      toast.error("New PIN and Confirm PIN do not match.");
       return;
     }
 
@@ -83,6 +152,9 @@ export default function SettingsPage() {
       }
       toast.success("Security PIN updated successfully! It is now required to reveal passwords.");
       setPinInput("");
+      setConfirmPinInput("");
+      setIsChangingPin(false);
+      setIsCurrentVerified(false);
     } catch (error: any) {
       console.error("Error setting PIN:", error);
       toast.error(error.response?.data?.error || "Failed to set Security PIN.");
@@ -181,27 +253,119 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6 md:p-8 pt-0 space-y-4">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <Input 
-              type="password"
-              maxLength={8}
-              placeholder="Enter PIN (e.g. 1655)"
-              value={pinInput}
-              onChange={(e) => setPinInput(e.target.value)}
-              className="bg-white/5 border-white/15 text-white font-mono text-lg tracking-widest sm:max-w-xs focus-visible:ring-cyan-400/50"
-            />
-            <Button 
-              onClick={handleSavePin} 
-              disabled={isSavingPin || !pinInput.trim()}
-              className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-bold px-6 rounded-2xl shadow-lg shadow-cyan-500/20"
-            >
-              {isSavingPin ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Security PIN"}
-            </Button>
-          </div>
-          {dbUser?.securityPin && (
-            <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1.5 pt-1">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" /> Security PIN is active and protecting your vault reveals.
-            </p>
+          {hasPin && !isChangingPin ? (
+            /* STATE 1: PIN ALREADY SET - SHOW STATUS & "CHANGE PIN" BUTTON */
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
+                <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-emerald-300">Security PIN is Active (••••)</p>
+                  <p className="text-xs text-slate-300">Your vault reveals and edits require PIN verification.</p>
+                </div>
+              </div>
+
+              <Button 
+                onClick={() => setIsChangingPin(true)}
+                variant="outline"
+                className="border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold px-6 rounded-2xl"
+              >
+                Change Security PIN
+              </Button>
+            </div>
+          ) : hasPin && isChangingPin && !isCurrentVerified ? (
+            /* STATE 2: RE-ENTER CURRENT PIN OR MASTER PASSWORD VERIFICATION */
+            <div className="space-y-4 bg-slate-900/60 p-5 rounded-2xl border border-cyan-500/20">
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-cyan-400" />
+                  Step 1 of 2: Verify Your Identity
+                </h4>
+                <p className="text-xs text-slate-300">
+                  Enter your <b>Current Security PIN</b> or <b>Master Password</b> to unlock PIN modification.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Input 
+                  type="password"
+                  placeholder="Enter current PIN or Password"
+                  value={currentVerificationInput}
+                  onChange={(e) => setCurrentVerificationInput(e.target.value)}
+                  className="bg-white/5 border-white/15 text-white font-mono text-base sm:max-w-xs focus-visible:ring-cyan-400/50"
+                />
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleVerifyCurrentPin} 
+                    disabled={isVerifyingCurrent || !currentVerificationInput.trim()}
+                    className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 rounded-2xl"
+                  >
+                    {isVerifyingCurrent ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify & Unlock"}
+                  </Button>
+                  <Button 
+                    onClick={() => { setIsChangingPin(false); setCurrentVerificationInput(""); }}
+                    variant="ghost" 
+                    className="text-slate-400 hover:text-white rounded-2xl"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* STATE 3: SET NEW PIN (Unlocked or First Time Setup) */
+            <div className="space-y-4">
+              {hasPin && isCurrentVerified && (
+                <div className="p-3 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-semibold flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+                  Identity verified! Set your new 4-digit Private PIN code below.
+                </div>
+              )}
+
+              <div className="grid gap-3 sm:grid-cols-2 max-w-md">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-slate-300 font-semibold">New Security PIN</Label>
+                  <Input 
+                    type="password"
+                    maxLength={8}
+                    placeholder="e.g. 1655"
+                    value={pinInput}
+                    onChange={(e) => setPinInput(e.target.value)}
+                    className="bg-white/5 border-white/15 text-white font-mono text-base tracking-widest focus-visible:ring-cyan-400/50"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-slate-300 font-semibold">Confirm New PIN</Label>
+                  <Input 
+                    type="password"
+                    maxLength={8}
+                    placeholder="Confirm PIN"
+                    value={confirmPinInput}
+                    onChange={(e) => setConfirmPinInput(e.target.value)}
+                    className="bg-white/5 border-white/15 text-white font-mono text-base tracking-widest focus-visible:ring-cyan-400/50"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <Button 
+                  onClick={handleSavePin} 
+                  disabled={isSavingPin || !pinInput.trim() || !confirmPinInput.trim()}
+                  className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-bold px-6 rounded-2xl shadow-lg shadow-cyan-500/20"
+                >
+                  {isSavingPin ? <Loader2 className="w-4 h-4 animate-spin" /> : hasPin ? "Update Security PIN" : "Save Security PIN"}
+                </Button>
+
+                {hasPin && (
+                  <Button 
+                    onClick={() => { setIsChangingPin(false); setIsCurrentVerified(false); setPinInput(""); setConfirmPinInput(""); }}
+                    variant="ghost" 
+                    className="text-slate-400 hover:text-white rounded-2xl"
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

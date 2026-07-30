@@ -56,6 +56,8 @@ export default function DashboardPage() {
   const { user, dbUser, masterKey } = useAuth();
   const [vaultItems, setVaultItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<'all' | 'weak' | 'reused'>('all');
 
   // Fetch Vault Items
   const fetchItems = async () => {
@@ -111,6 +113,47 @@ export default function DashboardPage() {
     fetchItems();
   }, [masterKey]);
 
+  // Dynamic Security Calculations
+  const isWeakPassword = (pass: string) => {
+    if (!pass) return true;
+    if (pass.length < 10) return true;
+    const hasUpper = /[A-Z]/.test(pass);
+    const hasNum = /[0-9]/.test(pass);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pass);
+    return !(hasUpper && (hasNum || hasSpecial));
+  };
+
+  const weakCount = vaultItems.filter(item => isWeakPassword(item.password)).length;
+
+  const passwordCounts = vaultItems.reduce((acc, item) => {
+    if (item.password) {
+      acc[item.password] = (acc[item.password] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  const reusedCount = vaultItems.filter(item => item.password && passwordCounts[item.password] > 1).length;
+
+  const healthScore = vaultItems.length === 0 ? 100 : Math.max(0, Math.min(100, Math.round(100 - (weakCount * 15) - (reusedCount * 25))));
+
+  // Filtered Vault Items based on Search Query & Active Metric Filter
+  const filteredVaultItems = vaultItems.filter(item => {
+    const query = searchQuery.toLowerCase().trim();
+    const matchesSearch = !query ||
+      item.title?.toLowerCase().includes(query) ||
+      item.username?.toLowerCase().includes(query) ||
+      item.category?.toLowerCase().includes(query) ||
+      item.owner?.toLowerCase().includes(query);
+
+    if (activeFilter === 'weak') {
+      return matchesSearch && isWeakPassword(item.password);
+    }
+    if (activeFilter === 'reused') {
+      return matchesSearch && item.password && passwordCounts[item.password] > 1;
+    }
+    return matchesSearch;
+  });
+
   return (
     <div className="flex-1 p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
       
@@ -151,51 +194,107 @@ export default function DashboardPage() {
         </div>
       </motion.section>
 
-      {/* Security Score Card - Light Glass Highlight Container (Inspired by Reference UI Statistics panel) */}
-      <div className="glass-card-light p-6 md:p-8 rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-5">
-            <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-slate-900 text-white border-[3px] border-emerald-400 shadow-xl">
-              <span className="text-2xl font-black text-emerald-400">92</span>
+      {/* Vault Health Card - Compact, Dynamic & Filterable */}
+      <div className="glass-card-light p-5 md:p-6 rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative z-10">
+          <div className="flex items-center gap-4">
+            <div className={`relative flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 text-white border-2 shadow-lg shrink-0 ${
+              healthScore >= 80 ? 'border-emerald-400' : healthScore >= 50 ? 'border-amber-400' : 'border-rose-500'
+            }`}>
+              <span className={`text-xl font-black ${
+                healthScore >= 80 ? 'text-emerald-400' : healthScore >= 50 ? 'text-amber-400' : 'text-rose-400'
+              }`}>
+                {isLoading ? "..." : healthScore}
+              </span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 uppercase tracking-wider">Optimal</span>
-                <h3 className="font-extrabold text-xl text-slate-900 tracking-tight">Vault Health</h3>
+                <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider ${
+                  healthScore >= 80 ? 'bg-emerald-500/15 text-emerald-700' : healthScore >= 50 ? 'bg-amber-500/15 text-amber-700' : 'bg-rose-500/15 text-rose-700'
+                }`}>
+                  {healthScore >= 80 ? 'Optimal' : healthScore >= 50 ? 'Warning' : 'Critical'}
+                </span>
+                <h3 className="font-extrabold text-lg text-slate-900 tracking-tight">Vault Health</h3>
               </div>
-              <p className="text-sm text-slate-600 font-medium mt-1">Excellent overall security score across all credentials.</p>
+              <p className="text-xs text-slate-600 font-medium mt-0.5">
+                {weakCount === 0 && reusedCount === 0 
+                  ? "All credentials have strong & unique passwords." 
+                  : `${weakCount} weak and ${reusedCount} reused credentials detected.`}
+              </p>
             </div>
           </div>
-          <div className="flex gap-4 border-t md:border-t-0 md:border-l border-slate-300/60 pt-4 md:pt-0 md:pl-8 w-full md:w-auto">
-            <div className="flex flex-col gap-1 min-w-[90px] bg-white/60 p-3 rounded-2xl border border-white/80 shadow-sm">
-              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5 text-amber-500"/> Weak</span>
-              <span className="font-extrabold text-xl text-slate-900">0</span>
-            </div>
-            <div className="flex flex-col gap-1 min-w-[90px] bg-white/60 p-3 rounded-2xl border border-white/80 shadow-sm">
-              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1"><ShieldAlert className="w-3.5 h-3.5 text-rose-500"/> Reused</span>
-              <span className="font-extrabold text-xl text-slate-900">2</span>
-            </div>
+
+          {/* Interactive Metric Filter Buttons */}
+          <div className="flex items-center gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-300/60 sm:pl-6">
+            <button 
+              onClick={() => setActiveFilter(activeFilter === 'weak' ? 'all' : 'weak')}
+              className={cn(
+                "flex flex-col gap-0.5 p-2.5 px-4 rounded-2xl border transition-all text-left flex-1 sm:flex-none cursor-pointer",
+                activeFilter === 'weak' 
+                  ? 'bg-amber-500/20 border-amber-500/50 shadow-md ring-2 ring-amber-400/40' 
+                  : 'bg-white/70 hover:bg-white/90 border-slate-200'
+              )}
+            >
+              <span className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500"/> Weak
+              </span>
+              <span className="font-extrabold text-lg text-slate-900">{weakCount}</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveFilter(activeFilter === 'reused' ? 'all' : 'reused')}
+              className={cn(
+                "flex flex-col gap-0.5 p-2.5 px-4 rounded-2xl border transition-all text-left flex-1 sm:flex-none cursor-pointer",
+                activeFilter === 'reused' 
+                  ? 'bg-rose-500/20 border-rose-500/50 shadow-md ring-2 ring-rose-400/40' 
+                  : 'bg-white/70 hover:bg-white/90 border-slate-200'
+              )}
+            >
+              <span className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                <ShieldAlert className="w-3.5 h-3.5 text-rose-500"/> Reused
+              </span>
+              <span className="font-extrabold text-lg text-slate-900">{reusedCount}</span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Vault Section */}
       <section className="space-y-4 pt-2">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
           <div>
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white">Recent Passwords</h2>
-            <p className="text-xs text-slate-400 font-medium mt-0.5">Quick access to your encrypted vault items</p>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <span>Vault Passwords</span>
+              {activeFilter !== 'all' && (
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  Filter: {activeFilter}
+                </span>
+              )}
+            </h2>
+            <p className="text-xs text-slate-400 font-medium mt-0.5">
+              Showing {filteredVaultItems.length} of {vaultItems.length} items
+            </p>
           </div>
-          <Link href="/dashboard" className="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
-            View All &rsaquo;
-          </Link>
-        </div>
 
-        {/* Mobile Search Bar */}
-        <div className="md:hidden relative">
-          <Search className="absolute left-4 top-3.5 h-4 w-4 text-slate-400" />
-          <Input placeholder="Search your vault..." className="pl-11" />
+          {/* Real-time Search Input Bar */}
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-cyan-400" />
+            <Input 
+              type="text"
+              placeholder="Search vault items..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-10 bg-white/5 border-white/15 text-white placeholder:text-slate-500 rounded-xl text-xs focus-visible:ring-cyan-400/50"
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-2.5 text-[10px] font-bold text-slate-400 hover:text-white bg-white/10 px-1.5 py-0.5 rounded"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Password List */}
@@ -204,19 +303,35 @@ export default function DashboardPage() {
             <div className="text-center p-12 glass-card rounded-3xl text-slate-400 animate-pulse font-medium">
               Decrypting vault items with Master Key...
             </div>
-          ) : vaultItems.length === 0 ? (
+          ) : filteredVaultItems.length === 0 ? (
             <div className="text-center p-10 glass-card rounded-3xl border border-dashed border-white/20">
               <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 text-cyan-400">
                 <ShieldCheck className="w-7 h-7" />
               </div>
-              <h3 className="text-lg font-bold text-white">Your vault is empty</h3>
-              <p className="text-sm text-slate-400 mb-6 mt-1 max-w-sm mx-auto">Start building your secure encrypted vault by adding your first credential.</p>
-              <Link href="/dashboard/add" className={cn(buttonVariants({ variant: "default" }), "rounded-full shadow-lg shadow-sky-500/25 px-6")}>
-                <Plus className="w-4 h-4 mr-2" /> Add Item
-              </Link>
+              <h3 className="text-lg font-bold text-white">
+                {vaultItems.length === 0 ? "Your vault is empty" : "No matching items found"}
+              </h3>
+              <p className="text-sm text-slate-400 mb-6 mt-1 max-w-sm mx-auto">
+                {vaultItems.length === 0 
+                  ? "Start building your secure encrypted vault by adding your first credential." 
+                  : "Try clearing search keywords or active filters."}
+              </p>
+              {vaultItems.length === 0 ? (
+                <Link href="/dashboard/add" className={cn(buttonVariants({ variant: "default" }), "rounded-full shadow-lg shadow-sky-500/25 px-6")}>
+                  <Plus className="w-4 h-4 mr-2" /> Add Item
+                </Link>
+              ) : (
+                <Button 
+                  onClick={() => { setSearchQuery(""); setActiveFilter('all'); }} 
+                  variant="outline"
+                  className="rounded-full px-6 border-white/20 text-white"
+                >
+                  Reset Search & Filters
+                </Button>
+              )}
             </div>
           ) : (
-            vaultItems.map((item) => (
+            filteredVaultItems.map((item) => (
               <div 
                 key={item.id} 
                 className="glass-card p-4 rounded-3xl flex items-center justify-between cursor-pointer hover:border-cyan-400/40 hover:bg-white/[0.1] transition-all duration-200 group shadow-lg"
