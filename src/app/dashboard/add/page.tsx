@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { useVault } from "@/context/VaultContext";
 import { encryptVaultItem } from "@/lib/crypto";
 import { auth } from "@/lib/firebase";
 import axios from "axios";
@@ -18,6 +19,7 @@ import axios from "axios";
 export default function AddPasswordPage() {
   const router = useRouter();
   const { masterKey } = useAuth();
+  const { refetchVaultItems } = useVault();
   
   const [showPassword, setShowPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -81,6 +83,7 @@ export default function AddPasswordPage() {
       });
 
       toast.success("Password encrypted and saved to vault!");
+      await refetchVaultItems();
       router.push("/dashboard");
     } catch (error: any) {
       console.error("Error saving vault item:", error);

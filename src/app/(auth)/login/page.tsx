@@ -36,7 +36,7 @@ export default function LoginPage() {
   }, [user, loading, router]);
 
   if (loading || user) {
-    return <CipherLoader size="fullscreen" text="Opening your Vault..." />;
+    return <CipherLoader size="fullscreen" text="Opening Vault..." />;
   }
 
   const handleLogin = async (e: React.FormEvent) => {

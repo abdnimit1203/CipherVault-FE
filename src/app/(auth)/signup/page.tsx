@@ -36,7 +36,7 @@ export default function SignupPage() {
   }, [user, loading, router]);
 
   if (loading || user) {
-    return <CipherLoader size="fullscreen" text="Opening your Vault..." />;
+    return <CipherLoader size="fullscreen" text="Opening Vault..." />;
   }
 
   // Simple mock password strength calculation

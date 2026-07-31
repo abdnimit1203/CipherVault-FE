@@ -26,3 +26,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Netlify env vars are all `NEXT_PUBLIC_*` and get baked into the client
   bundle at build time — set them in Netlify's dashboard *before* the first
   deploy, not after.
+- **PWA icons must actually exist and match `manifest.json`**:
+  `public/manifest.json` declares `icon-192x192.png` and `icon-512x512.png`
+  (both required — Chrome checks for both a ~192px and a ~512px icon). If
+  either file is missing, or its actual pixel dimensions don't match the
+  `sizes` declared in the manifest, Chrome on Android silently withholds the
+  "Install app" / "Add to Home Screen" prompt with no visible error — it just
+  never offers to install. This already happened once here from the icon
+  files simply not being in `public/` yet. Always verify both files exist at
+  the exact declared dimensions before assuming the PWA config itself is
+  broken.

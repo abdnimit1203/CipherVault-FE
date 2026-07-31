@@ -2,17 +2,18 @@
 
 import Link from "next/link";
 import { FaFacebook, FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa6";
-import { Heart } from "lucide-react";
+import { Bot, Heart } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-[#07111e]/90 backdrop-blur-md border-t border-white/10 py-6 px-4 text-slate-400 relative z-20 mt-auto">
+    <footer className="w-full bg-[#07111e]/90 backdrop-blur-md border-t border-white/10 py-6 px-4 text-slate-400 relative z-20 mt-auto  ">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-1.5 text-center sm:text-left flex-wrap justify-center sm:justify-start">
           <span>Developed with</span>
           <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
+          <Bot className="w-3.5 h-3.5 text-blue-500 animate-bounce fill-slate-200" />
           <span>by</span>
           <Link
             href="https://abdullah-portfolio-frontend.netlify.app/"

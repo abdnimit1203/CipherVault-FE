@@ -15,10 +15,11 @@ const PasswordDetailsDialog = dynamic(
   { ssr: false }
 );
 import { useAuth } from "@/context/AuthContext";
+import { useVault } from "@/context/VaultContext";
 import { auth } from "@/lib/firebase";
-import { decryptVaultItem } from "@/lib/crypto";
-import axios from "axios";
 import { toast } from "sonner";
+
+import { VaultItemSkeleton } from "@/components/ui/VaultItemSkeleton";
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good Day");
@@ -53,68 +54,13 @@ export default function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const { user, dbUser, masterKey } = useAuth();
-  const [vaultItems, setVaultItems] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, dbUser } = useAuth();
+  const { vaultItems, isLoading, refetchVaultItems } = useVault();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<'all' | 'weak' | 'reused'>('all');
 
-  // Fetch Vault Items
-  const fetchItems = async () => {
-    if (!masterKey || !auth.currentUser) return;
-    
-    try {
-      const token = await auth.currentUser.getIdToken();
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-      const response = await axios.get(`${apiUrl}/vault`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      const encryptedItems = response.data.items;
-      
-      // Decrypt all items
-      const decryptedItems = await Promise.all(
-        encryptedItems.map(async (item: any) => {
-          try {
-            const decryptedData = await decryptVaultItem(item.encryptedData, item.iv, masterKey);
-            return {
-              id: item._id,
-              title: item.title,
-              category: item.category,
-              icon: item.title.charAt(0).toUpperCase(),
-              ...decryptedData
-            };
-          } catch (err) {
-            console.error("Failed to decrypt item:", item._id, err);
-            return {
-              id: item._id,
-              title: item.title,
-              category: item.category,
-              icon: '?',
-              username: "Encryption Error",
-              password: "",
-              url: "",
-              notes: ""
-            };
-          }
-        })
-      );
-      
-      setVaultItems(decryptedItems);
-    } catch (error) {
-      console.error("Error fetching vault items:", error);
-      toast.error("Failed to load vault items.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchItems();
-  }, [masterKey]);
-
   // Dynamic Security Calculations
-  const isWeakPassword = (pass: string) => {
+  const isWeakPassword = (pass?: string) => {
     if (!pass) return true;
     if (pass.length < 10) return true;
     const hasUpper = /[A-Z]/.test(pass);
@@ -300,9 +246,7 @@ export default function DashboardPage() {
         {/* Password List */}
         <div className="grid gap-3.5">
           {isLoading ? (
-            <div className="text-center p-12 glass-card rounded-3xl text-slate-400 animate-pulse font-medium">
-              Decrypting vault items with Master Key...
-            </div>
+            <VaultItemSkeleton count={4} />
           ) : filteredVaultItems.length === 0 ? (
             <div className="text-center p-10 glass-card rounded-3xl border border-dashed border-white/20">
               <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 text-cyan-400">
@@ -374,8 +318,8 @@ export default function DashboardPage() {
         isOpen={isDialogOpen} 
         onClose={() => setIsDialogOpen(false)} 
         item={selectedItem} 
-        onItemUpdated={fetchItems}
-        onItemDeleted={fetchItems}
+        onItemUpdated={refetchVaultItems}
+        onItemDeleted={refetchVaultItems}
       />
     </div>
   );

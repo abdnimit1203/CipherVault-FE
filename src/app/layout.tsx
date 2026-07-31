@@ -3,6 +3,7 @@ import { Space_Grotesk, Orbitron } from "next/font/google";
 import "./globals.css";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthProvider } from "@/context/AuthContext";
+import { VaultProvider } from "@/context/VaultContext";
 import NextTopLoader from 'nextjs-toploader';
 
 const spaceGrotesk = Space_Grotesk({ 
@@ -80,7 +81,9 @@ export default function RootLayout({
       <body className={`${spaceGrotesk.className} antialiased`} suppressHydrationWarning>
         <NextTopLoader color="#38bdf8" showSpinner={false} />
         <AuthProvider>
-          <AppLayout>{children}</AppLayout>
+          <VaultProvider>
+            <AppLayout>{children}</AppLayout>
+          </VaultProvider>
         </AuthProvider>
       </body>
     </html>

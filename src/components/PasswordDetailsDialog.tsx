@@ -369,7 +369,7 @@ export function PasswordDetailsDialog({
                   <div className="flex items-center justify-between">
                     <Label className="text-slate-300 font-semibold text-xs">Password</Label>
                     {isRevealed && (
-                      <span className="text-xs text-emerald-400 font-bold animate-pulse">Auto-hides in {countdown}s</span>
+                      <span className="text-xs text-emerald-400 font-bold">Auto-hides in {countdown}s</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2">

@@ -5,11 +5,10 @@ import { Search, ShieldCheck, Filter, KeyRound, Globe, User, Tag, ExternalLink }
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
-import { auth } from "@/lib/firebase";
-import { decryptVaultItem } from "@/lib/crypto";
-import axios from "axios";
+import { useVault } from "@/context/VaultContext";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import { VaultItemSkeleton } from "@/components/ui/VaultItemSkeleton";
 
 const PasswordDetailsDialog = dynamic(
   () => import("@/components/PasswordDetailsDialog").then(mod => mod.PasswordDetailsDialog),
@@ -17,64 +16,13 @@ const PasswordDetailsDialog = dynamic(
 );
 
 export default function SearchPage() {
-  const { masterKey } = useAuth();
-  const [vaultItems, setVaultItems] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { vaultItems, isLoading, refetchVaultItems } = useVault();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Dialog State
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      if (!masterKey || !auth.currentUser) return;
-      try {
-        const token = await auth.currentUser.getIdToken();
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-        const response = await axios.get(`${apiUrl}/vault`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        const encryptedItems = response.data.items;
-        const decrypted = await Promise.all(
-          encryptedItems.map(async (item: any) => {
-            try {
-              const data = await decryptVaultItem(item.encryptedData, item.iv, masterKey);
-              return {
-                id: item._id,
-                title: item.title,
-                category: item.category,
-                owner: item.owner || "Personal",
-                icon: item.title.charAt(0).toUpperCase(),
-                ...data
-              };
-            } catch (err) {
-              return {
-                id: item._id,
-                title: item.title,
-                category: item.category,
-                owner: item.owner || "Personal",
-                icon: "?",
-                username: "Encryption Error",
-                password: "",
-                url: "",
-                notes: ""
-              };
-            }
-          })
-        );
-        setVaultItems(decrypted);
-      } catch (err) {
-        console.error("Search fetch error:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchItems();
-  }, [masterKey]);
 
   // Filter items dynamically
   const filteredItems = vaultItems.filter((item) => {
@@ -157,9 +105,7 @@ export default function SearchPage() {
         </p>
 
         {isLoading ? (
-          <div className="text-center p-12 glass-card rounded-3xl text-slate-400 animate-pulse font-medium">
-            Searching encrypted vault...
-          </div>
+          <VaultItemSkeleton count={3} />
         ) : filteredItems.length === 0 ? (
           <div className="text-center p-10 glass-card rounded-3xl border border-dashed border-white/15">
             <Search className="w-8 h-8 text-slate-500 mx-auto mb-3" />
@@ -225,11 +171,12 @@ export default function SearchPage() {
             setSelectedItem(null);
           }}
           onItemDeleted={() => {
-            setVaultItems(prev => prev.filter(i => i.id !== selectedItem.id));
+            refetchVaultItems();
             setSelectedItem(null);
             setIsDialogOpen(false);
           }}
           onItemUpdated={() => {
+            refetchVaultItems();
             setIsDialogOpen(false);
           }}
         />

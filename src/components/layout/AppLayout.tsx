@@ -14,7 +14,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { loading } = useAuth();
 
   if (loading) {
-    return <CipherLoader size="fullscreen" text="Decrypting Vault Session..." />;
+    return <CipherLoader size="fullscreen" text="Loading Vault..." />;
   }
 
   const isPublicPage = pathname === "/" || pathname === "/login" || pathname === "/signup";

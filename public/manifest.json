@@ -4,8 +4,8 @@
   "description": "Zero-Knowledge client-side encrypted password manager built by Abdullah Ibne Ali.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#09090b",
-  "theme_color": "#6366f1",
+  "background_color": "#070f1e",
+  "theme_color": "#00f2fe",
   "icons": [
     {
       "src": "/icon-192x192.png",
