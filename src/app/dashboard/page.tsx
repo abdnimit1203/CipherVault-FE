@@ -120,36 +120,36 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="flex-1 p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
+    <div className="flex-1 p-3.5 sm:p-4 md:p-8 space-y-4 md:space-y-8 max-w-5xl mx-auto">
       
       {/* Floating Greeting Card Section */}
       <motion.section 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="glass-card p-6 md:p-8 rounded-3xl relative overflow-hidden border border-cyan-500/20 shadow-2xl bg-gradient-to-r from-cyan-950/20 via-sky-950/10 to-indigo-950/20"
+        className="glass-card p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl relative overflow-hidden border border-cyan-500/20 shadow-2xl bg-gradient-to-r from-cyan-950/20 via-sky-950/10 to-indigo-950/20"
       >
         <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-4 relative z-10">
+          <div className="space-y-1 sm:space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-base sm:text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-1.5">
                 <span>{greetingIcon}</span>
                 <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
                   {greeting}, {getFirstName()}!
                 </span>
               </h1>
               {currentTime && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-medium shadow-inner">
-                  <Clock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[10px] sm:text-xs font-mono font-medium shadow-inner">
+                  <Clock className="w-3 h-3 text-cyan-400 animate-pulse" />
                   <span>{currentTime}</span>
                   <span className="text-slate-500">•</span>
                   <span className="text-slate-300">{currentDate}</span>
                 </div>
               )}
             </div>
-            <p className="text-slate-300 text-xs md:text-sm font-medium flex items-center gap-1.5 pt-0.5">
-              <ShieldCheck className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+            <p className="text-slate-300 text-[11px] sm:text-xs md:text-sm font-medium flex items-center gap-1.5 pt-0.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
               <span>Your vault is protected with zero-knowledge AES-256-GCM encryption.</span>
             </p>
           </div>
@@ -159,66 +159,66 @@ export default function DashboardPage() {
         </div>
       </motion.section>
 
-      {/* Vault Health Card - Compact, Dynamic & Filterable */}
-      <div className="glass-card-light p-5 md:p-6 rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative z-10">
-          <div className="flex items-center gap-4">
-            <div className={`relative flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 text-white border-2 shadow-lg shrink-0 ${
+      {/* Vault Health Card - Ultra Compact Flex Row for Mobile */}
+      <div className="glass-card-light p-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
+        <div className="flex flex-row items-center justify-between gap-2.5 sm:gap-5 relative z-10">
+          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
+            <div className={`relative flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-slate-900 text-white border-2 shadow-lg shrink-0 ${
               healthScore >= 80 ? 'border-emerald-400' : healthScore >= 50 ? 'border-amber-400' : 'border-rose-500'
             }`}>
-              <span className={`text-xl font-black ${
+              <span className={`text-sm sm:text-xl font-black ${
                 healthScore >= 80 ? 'text-emerald-400' : healthScore >= 50 ? 'text-amber-400' : 'text-rose-400'
               }`}>
                 {isLoading ? "..." : healthScore}
               </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider ${
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className={`px-2 py-0.2 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider ${
                   healthScore >= 80 ? 'bg-emerald-500/15 text-emerald-700' : healthScore >= 50 ? 'bg-amber-500/15 text-amber-700' : 'bg-rose-500/15 text-rose-700'
                 }`}>
                   {healthScore >= 80 ? 'Optimal' : healthScore >= 50 ? 'Warning' : 'Critical'}
                 </span>
-                <h3 className="font-extrabold text-lg text-slate-900 tracking-tight">Vault Health</h3>
+                <h3 className="font-extrabold text-xs sm:text-lg text-slate-900 tracking-tight truncate">Vault Health</h3>
               </div>
-              <p className="text-xs text-slate-600 font-medium mt-0.5">
+              <p className="text-[10px] sm:text-xs text-slate-600 font-medium mt-0.5 truncate max-w-[130px] xs:max-w-none">
                 {weakCount === 0 && reusedCount === 0 
                   ? "All credentials have strong & unique passwords." 
-                  : `${weakCount} weak and ${reusedCount} reused credentials detected.`}
+                  : `${weakCount} weak, ${reusedCount} reused credentials.`}
               </p>
             </div>
           </div>
 
           {/* Interactive Metric Filter Buttons */}
-          <div className="flex items-center gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-300/60 sm:pl-6">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button 
               onClick={() => setActiveFilter(activeFilter === 'weak' ? 'all' : 'weak')}
               className={cn(
-                "flex flex-col gap-0.5 p-2.5 px-4 rounded-2xl border transition-all text-left flex-1 sm:flex-none cursor-pointer",
+                "flex flex-col gap-0 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all text-left cursor-pointer",
                 activeFilter === 'weak' 
                   ? 'bg-amber-500/20 border-amber-500/50 shadow-md ring-2 ring-amber-400/40' 
                   : 'bg-white/70 hover:bg-white/90 border-slate-200'
               )}
             >
-              <span className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500"/> Weak
+              <span className="text-[9px] sm:text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500"/> <span className="hidden xs:inline">Weak</span>
               </span>
-              <span className="font-extrabold text-lg text-slate-900">{weakCount}</span>
+              <span className="font-extrabold text-xs sm:text-lg text-slate-900">{weakCount}</span>
             </button>
 
             <button 
               onClick={() => setActiveFilter(activeFilter === 'reused' ? 'all' : 'reused')}
               className={cn(
-                "flex flex-col gap-0.5 p-2.5 px-4 rounded-2xl border transition-all text-left flex-1 sm:flex-none cursor-pointer",
+                "flex flex-col gap-0 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all text-left cursor-pointer",
                 activeFilter === 'reused' 
                   ? 'bg-rose-500/20 border-rose-500/50 shadow-md ring-2 ring-rose-400/40' 
                   : 'bg-white/70 hover:bg-white/90 border-slate-200'
               )}
             >
-              <span className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
-                <ShieldAlert className="w-3.5 h-3.5 text-rose-500"/> Reused
+              <span className="text-[9px] sm:text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                <ShieldAlert className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-500"/> <span className="hidden xs:inline">Reused</span>
               </span>
-              <span className="font-extrabold text-lg text-slate-900">{reusedCount}</span>
+              <span className="font-extrabold text-xs sm:text-lg text-slate-900">{reusedCount}</span>
             </button>
           </div>
         </div>
