@@ -194,31 +194,31 @@ export default function DashboardPage() {
             <button 
               onClick={() => setActiveFilter(activeFilter === 'weak' ? 'all' : 'weak')}
               className={cn(
-                "flex flex-col gap-0 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all text-left cursor-pointer",
+                "flex items-center gap-1.5 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer",
                 activeFilter === 'weak' 
                   ? 'bg-amber-500/20 border-amber-500/50 shadow-md ring-2 ring-amber-400/40' 
                   : 'bg-white/70 hover:bg-white/90 border-slate-200'
               )}
             >
-              <span className="text-[9px] sm:text-[11px] text-slate-500 font-semibold flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500"/> <span className="hidden xs:inline">Weak</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-600 font-bold flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 shrink-0"/> Weak
               </span>
-              <span className="font-extrabold text-xs sm:text-lg text-slate-900">{weakCount}</span>
+              <span className="font-extrabold text-xs sm:text-base text-slate-900 ml-0.5">{weakCount}</span>
             </button>
 
             <button 
               onClick={() => setActiveFilter(activeFilter === 'reused' ? 'all' : 'reused')}
               className={cn(
-                "flex flex-col gap-0 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all text-left cursor-pointer",
+                "flex items-center gap-1.5 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer",
                 activeFilter === 'reused' 
                   ? 'bg-rose-500/20 border-rose-500/50 shadow-md ring-2 ring-rose-400/40' 
                   : 'bg-white/70 hover:bg-white/90 border-slate-200'
               )}
             >
-              <span className="text-[9px] sm:text-[11px] text-slate-500 font-semibold flex items-center gap-1">
-                <ShieldAlert className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-500"/> <span className="hidden xs:inline">Reused</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-600 font-bold flex items-center gap-1">
+                <ShieldAlert className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-500 shrink-0"/> Reused
               </span>
-              <span className="font-extrabold text-xs sm:text-lg text-slate-900">{reusedCount}</span>
+              <span className="font-extrabold text-xs sm:text-base text-slate-900 ml-0.5">{reusedCount}</span>
             </button>
           </div>
         </div>
