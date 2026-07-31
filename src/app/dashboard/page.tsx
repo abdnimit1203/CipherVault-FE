@@ -39,10 +39,10 @@ export default function DashboardPage() {
     const updateTimeAndGreeting = () => {
       const now = new Date();
       const hour = now.getHours();
-      if (hour < 12) {
+      if (hour >= 5 && hour < 12) {
         setGreeting("Good Morning");
         setGreetingIcon("🌅");
-      } else if (hour < 18) {
+      } else if (hour >= 12 && hour < 18) {
         setGreeting("Good Afternoon");
         setGreetingIcon("☀️");
       } else {
