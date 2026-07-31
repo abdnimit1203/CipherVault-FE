@@ -159,66 +159,66 @@ export default function DashboardPage() {
         </div>
       </motion.section>
 
-      {/* Vault Health Card - Ultra Compact Flex Row for Mobile */}
-      <div className="glass-card-light p-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
-        <div className="flex flex-row items-center justify-between gap-2.5 sm:gap-5 relative z-10">
-          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
-            <div className={`relative flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-slate-900 text-white border-2 shadow-lg shrink-0 ${
+      {/* Vault Health Card - Spacious, Readable & Dynamic */}
+      <div className="glass-card-light p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-5 relative z-10">
+          <div className="flex items-center gap-3.5 sm:gap-4">
+            <div className={`relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-900 text-white border-2 shadow-lg shrink-0 ${
               healthScore >= 80 ? 'border-emerald-400' : healthScore >= 50 ? 'border-amber-400' : 'border-rose-500'
             }`}>
-              <span className={`text-sm sm:text-xl font-black ${
+              <span className={`text-lg sm:text-xl font-black ${
                 healthScore >= 80 ? 'text-emerald-400' : healthScore >= 50 ? 'text-amber-400' : 'text-rose-400'
               }`}>
                 {isLoading ? "..." : healthScore}
               </span>
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className={`px-2 py-0.2 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider ${
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${
                   healthScore >= 80 ? 'bg-emerald-500/15 text-emerald-700' : healthScore >= 50 ? 'bg-amber-500/15 text-amber-700' : 'bg-rose-500/15 text-rose-700'
                 }`}>
                   {healthScore >= 80 ? 'Optimal' : healthScore >= 50 ? 'Warning' : 'Critical'}
                 </span>
-                <h3 className="font-extrabold text-xs sm:text-lg text-slate-900 tracking-tight truncate">Vault Health</h3>
+                <h3 className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight">Vault Health</h3>
               </div>
-              <p className="text-[10px] sm:text-xs text-slate-600 font-medium mt-0.5 truncate max-w-[130px] xs:max-w-none">
+              <p className="text-xs sm:text-sm text-slate-600 font-medium break-words leading-snug">
                 {weakCount === 0 && reusedCount === 0 
                   ? "All credentials have strong & unique passwords." 
-                  : `${weakCount} weak, ${reusedCount} reused credentials.`}
+                  : `${weakCount} weak and ${reusedCount} reused credentials detected.`}
               </p>
             </div>
           </div>
 
-          {/* Interactive Metric Filter Buttons */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* Interactive Metric Filter Buttons - Small & Compact */}
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto pt-2.5 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-300/60 sm:pl-5">
             <button 
               onClick={() => setActiveFilter(activeFilter === 'weak' ? 'all' : 'weak')}
               className={cn(
-                "flex items-center gap-1.5 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer",
+                "flex items-center justify-between sm:flex-col sm:items-start gap-1 p-1.5 px-3 rounded-xl sm:rounded-2xl border transition-all text-left flex-1 sm:flex-none cursor-pointer",
                 activeFilter === 'weak' 
                   ? 'bg-amber-500/20 border-amber-500/50 shadow-md ring-2 ring-amber-400/40' 
                   : 'bg-white/70 hover:bg-white/90 border-slate-200'
               )}
             >
               <span className="text-[10px] sm:text-[11px] text-slate-600 font-bold flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 shrink-0"/> Weak
+                <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0"/> Weak
               </span>
-              <span className="font-extrabold text-xs sm:text-base text-slate-900 ml-0.5">{weakCount}</span>
+              <span className="font-extrabold text-xs sm:text-sm text-slate-900">{weakCount}</span>
             </button>
 
             <button 
               onClick={() => setActiveFilter(activeFilter === 'reused' ? 'all' : 'reused')}
               className={cn(
-                "flex items-center gap-1.5 p-1.5 px-2.5 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer",
+                "flex items-center justify-between sm:flex-col sm:items-start gap-1 p-1.5 px-3 rounded-xl sm:rounded-2xl border transition-all text-left flex-1 sm:flex-none cursor-pointer",
                 activeFilter === 'reused' 
                   ? 'bg-rose-500/20 border-rose-500/50 shadow-md ring-2 ring-rose-400/40' 
                   : 'bg-white/70 hover:bg-white/90 border-slate-200'
               )}
             >
               <span className="text-[10px] sm:text-[11px] text-slate-600 font-bold flex items-center gap-1">
-                <ShieldAlert className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-500 shrink-0"/> Reused
+                <ShieldAlert className="w-3 h-3 text-rose-500 shrink-0"/> Reused
               </span>
-              <span className="font-extrabold text-xs sm:text-base text-slate-900 ml-0.5">{reusedCount}</span>
+              <span className="font-extrabold text-xs sm:text-sm text-slate-900">{reusedCount}</span>
             </button>
           </div>
         </div>
