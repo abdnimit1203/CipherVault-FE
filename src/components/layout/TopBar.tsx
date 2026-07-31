@@ -39,11 +39,11 @@ export function TopBar() {
               {dbUser?.fullName?.charAt(0) || user?.email?.charAt(0) || <User className="w-3.5 h-3.5 text-cyan-400" />}
             </div>
           )}
-          <span className="text-xs font-semibold text-slate-200">{dbUser?.fullName?.split(' ')[0] || "User"}</span>
+          <span className="text-xs font-semibold text-slate-200">{dbUser?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || "User"}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56 mt-2 bg-[#0c192c]/95 border border-cyan-500/30 text-slate-100 backdrop-blur-2xl shadow-2xl rounded-2xl p-2 z-50">
           <div className="px-3 py-2 border-b border-white/10 mb-1">
-            <p className="text-xs font-bold text-white truncate">{dbUser?.fullName || "User Account"}</p>
+            <p className="text-xs font-bold text-white truncate">{dbUser?.fullName || user?.displayName || user?.email?.split('@')[0] || "User Account"}</p>
             <p className="text-[11px] text-cyan-300/80 truncate font-mono mt-0.5">{dbUser?.email || user?.email}</p>
           </div>
           <DropdownMenuItem className="cursor-pointer text-slate-200 focus:text-white focus:bg-cyan-500/20 rounded-xl my-0.5">

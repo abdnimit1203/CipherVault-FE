@@ -88,7 +88,7 @@ export function Sidebar() {
             </div>
           )}
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-xs font-bold text-white truncate">{dbUser?.fullName || "User Account"}</span>
+            <span className="text-xs font-bold text-white truncate">{dbUser?.fullName || user?.displayName || user?.email?.split('@')[0] || "User Account"}</span>
             <span className="text-[10px] text-slate-400 truncate">{dbUser?.email || user?.email}</span>
           </div>
         </div>

@@ -18,44 +18,60 @@ import { useAuth } from "@/context/AuthContext";
 import { useVault } from "@/context/VaultContext";
 import { auth } from "@/lib/firebase";
 import { toast } from "sonner";
-
 import { VaultItemSkeleton } from "@/components/ui/VaultItemSkeleton";
 
 export default function DashboardPage() {
+  const { user, dbUser } = useAuth();
+  const { vaultItems, isLoading, refetchVaultItems } = useVault();
+
   const [greeting, setGreeting] = useState("Good Day");
   const [greetingIcon, setGreetingIcon] = useState("👋");
   const [currentTime, setCurrentTime] = useState<string>("");
   const [currentDate, setCurrentDate] = useState<string>("");
+  const [isMounted, setIsMounted] = useState(false);
   
   // Dialog state
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) {
-      setGreeting("Good Morning");
-      setGreetingIcon("🌅");
-    } else if (hour < 18) {
-      setGreeting("Good Afternoon");
-      setGreetingIcon("☀️");
-    } else {
-      setGreeting("Good Evening");
-      setGreetingIcon("🌇");
-    }
-
-    const updateClock = () => {
+    setIsMounted(true);
+    const updateTimeAndGreeting = () => {
       const now = new Date();
+      const hour = now.getHours();
+      if (hour < 12) {
+        setGreeting("Good Morning");
+        setGreetingIcon("🌅");
+      } else if (hour < 18) {
+        setGreeting("Good Afternoon");
+        setGreetingIcon("☀️");
+      } else {
+        setGreeting("Good Evening");
+        setGreetingIcon("🌆");
+      }
       setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       setCurrentDate(now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
     };
-    updateClock();
-    const timer = setInterval(updateClock, 1000);
+
+    updateTimeAndGreeting();
+    const timer = setInterval(updateTimeAndGreeting, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const { user, dbUser } = useAuth();
-  const { vaultItems, isLoading, refetchVaultItems } = useVault();
+  const getFirstName = () => {
+    if (dbUser?.fullName?.trim()) {
+      return dbUser.fullName.trim().split(" ")[0];
+    }
+    if (user?.displayName?.trim()) {
+      return user.displayName.trim().split(" ")[0];
+    }
+    if (user?.email) {
+      const prefix = user.email.split("@")[0];
+      const clean = prefix.split(".")[0].split("_")[0].split("-")[0];
+      if (clean) return clean.charAt(0).toUpperCase() + clean.slice(1);
+    }
+    return "User";
+  };
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<'all' | 'weak' | 'reused'>('all');
 
@@ -117,7 +133,7 @@ export default function DashboardPage() {
               <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                 <span>{greetingIcon}</span>
                 <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-                  {greeting}, {dbUser?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Member'}!
+                  {greeting}, {getFirstName()}!
                 </span>
               </h1>
               {currentTime && (
